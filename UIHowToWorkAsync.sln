@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.106
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIHowToWorkAsync", "UIHowToWorkAsync\UIHowToWorkAsync.csproj", "{DE8B17BF-8909-4C89-B2BF-B19A6A8393FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowToWorkAsync", "LibraryHowToWorkAsync\HowToWorkAsync.csproj", "{42B3C501-B2F6-411A-9EEE-4E0E78FF4718}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE8B17BF-8909-4C89-B2BF-B19A6A8393FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8B17BF-8909-4C89-B2BF-B19A6A8393FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8B17BF-8909-4C89-B2BF-B19A6A8393FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8B17BF-8909-4C89-B2BF-B19A6A8393FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B3C501-B2F6-411A-9EEE-4E0E78FF4718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B3C501-B2F6-411A-9EEE-4E0E78FF4718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B3C501-B2F6-411A-9EEE-4E0E78FF4718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B3C501-B2F6-411A-9EEE-4E0E78FF4718}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CD130E72-438E-4232-AC0B-037AA21B801E}
+	EndGlobalSection
+EndGlobal
