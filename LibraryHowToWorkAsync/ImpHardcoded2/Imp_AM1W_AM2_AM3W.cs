@@ -19,14 +19,14 @@ namespace HowToWorkAsync.ImpHardcoded2
         protected override async Task<string> M1Async()
         {
             var nameReflection = Adaptador(MethodBase.GetCurrentMethod(), true);
-            _generator.Generate("001"+ nameReflection, -1);
+            _generator.WriteLineReport("001"+ nameReflection, -1);
 
             var cadena2 = M2Async();
             var cadena3 = M3Async();
 
             var cadena1 = TaskBase("01-" + nameReflection, 1);
 
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
 
             return cadena1 + cadena2.Result + cadena3.Result;
         }

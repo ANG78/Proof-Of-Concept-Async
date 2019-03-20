@@ -138,6 +138,7 @@
             this.chConId.TabIndex = 26;
             this.chConId.Text = "Name+Id Thread ";
             this.chConId.UseVisualStyleBackColor = true;
+            this.chConId.Visible = false;
             this.chConId.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
             // 
             // chkHilos

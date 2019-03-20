@@ -5,15 +5,15 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HowToWorkAsync.Process
 {
-    public class StrategyPintar : IStrategyProcesarInforme
+    public class StrategyPintar : IStrategyProcessReport
     {
-        readonly Chart grafica;
-        readonly bool chkOrdernar;
+        readonly Chart chart;
+        readonly bool chkOrder;
         readonly bool chkSerie;
-        readonly bool chkSerieSinIds;
+        readonly bool chkSerieWithoutIds;
         readonly bool chkHilos;
         readonly bool chkTiempoTicks;
-        readonly SeriesChartType cmbTipoGrafica;
+        readonly SeriesChartType cmbTypeOfGraphic;
 
         public StrategyPintar(Chart pgrafica,
                               bool pchkOrdernar,
@@ -24,25 +24,25 @@ namespace HowToWorkAsync.Process
                               SeriesChartType pcmbTipoGrafica
                             )
         {
-            grafica = pgrafica;
-            chkOrdernar = pchkOrdernar;
+            chart = pgrafica;
+            chkOrder = pchkOrdernar;
             chkSerie = pchkSerie;
             chkHilos = pchkHilos;
             chkTiempoTicks = pchkTiempoTicks;
-            cmbTipoGrafica = pcmbTipoGrafica;
-            chkSerieSinIds = pchkSerieSinIds;
+            cmbTypeOfGraphic = pcmbTipoGrafica;
+            chkSerieWithoutIds = pchkSerieSinIds;
         }
 
-        public void Ejecutar(Report informe)
+        public void Execute(Report informe)
         {
 
             if (informe == null)
                 return;
 
-            grafica.Titles.Clear();
-            grafica.Series.Clear();
+            chart.Titles.Clear();
+            chart.Series.Clear();
 
-            grafica.Titles.Add(informe.Results);
+            chart.Titles.Add(informe.Results);
 
             if (informe.Series == null)
                 throw new Exception("Fallo de impl, el listado de series no puede estar nula");
@@ -51,12 +51,12 @@ namespace HowToWorkAsync.Process
             if (listadorSeries.Count == 0)
                 throw new Exception("Fallo de impl, el listado de series no puede estar nula");
 
-            if (chkOrdernar)
+            if (chkOrder)
             {
                 listadorSeries = listadorSeries.OrderByDescending(x => x.IdSerie).ToList();
             }
 
-            if (!chkSerieSinIds)
+            if (!chkSerieWithoutIds)
             {
                 Dictionary<string, List<Serie>> seriesWithIdThread = new Dictionary<string, List<Serie>>();
                 foreach (var aux in listadorSeries)
@@ -80,41 +80,41 @@ namespace HowToWorkAsync.Process
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
-                Series serie = grafica.Series.Add(serieExtraida.IdSerie);
+                Series serie = chart.Series.Add(serieExtraida.IdSerie);
 
-                var puntos = serieExtraida.Points;
-                if (puntos == null || puntos.Count == 0)
+                var points = serieExtraida.Points;
+                if (points == null || points.Count == 0)
                     throw new Exception("Fallo de impl, la serie no puede estar vacia");
 
-                if (puntos.Count == 1)
-                    puntos.Add(new PointSerie() { Y = -1, X = puntos[0].X, IdHilo = puntos[0].IdHilo, When = puntos[0].When });
+                if (points.Count == 1)
+                    points.Add(new PointSerie() { Y = -1, X = points[0].X, IdHilo = points[0].IdHilo, When = points[0].When });
 
                 tiemposExtraidos += " [" + serieExtraida.IdSerie + ":" + serieExtraida.TiempoEntreInicioYFinEnMilisegundos() + " mls]   ";
 
-                serie.ChartType = cmbTipoGrafica;
+                serie.ChartType = cmbTypeOfGraphic;
                 serie.BorderDashStyle = ChartDashStyle.Solid;
                 serie.BorderWidth = 8;
                 serie.MarkerSize = 8;
 
-                for (int j = 0; j < puntos.Count; j++)
+                for (int j = 0; j < points.Count; j++)
                 {
                     if (chkHilos)
                     {
-                        serie.Points.AddXY(chkTiempoTicks ? puntos[j].When.Ticks : puntos[j].X, puntos[j].IdHilo);
-                        if (chkSerie && (j == puntos.Count - 1 || j==0))
-                            serie.Points[j].Label = puntos[j].IdSerieAndIdThread;
+                        serie.Points.AddXY(chkTiempoTicks ? points[j].When.Ticks : points[j].X, points[j].IdHilo);
+                        if (chkSerie && (j == points.Count - 1 || j==0))
+                            serie.Points[j].Label = points[j].IdSerie;
                     }
                     else
                     {
-                        serie.Points.AddXY(chkTiempoTicks ? puntos[j].When.Ticks : puntos[j].X, puntos[j].Y);
-                        if (chkSerie && (j == puntos.Count - 1 || j == 0))
-                            serie.Points[j].Label = puntos[j].IdSerieAndIdThread;
+                        serie.Points.AddXY(chkTiempoTicks ? points[j].When.Ticks : points[j].X, points[j].Y);
+                        if (chkSerie && (j == points.Count - 1 || j == 0))
+                            serie.Points[j].Label = points[j].IdSerie;
                     }
 
                 }
             }
 
-            grafica.Titles.Add(tiemposExtraidos);
+            chart.Titles.Add(tiemposExtraidos);
 
 
         }
@@ -131,7 +131,7 @@ namespace HowToWorkAsync.Process
             if (listadorSeries.Count == 0)
                 throw new Exception("Fallo de impl, el listado de series no puede estar nula");
 
-            if (chkOrdernar)
+            if (chkOrder)
             {
                 listadorSeries = listadorSeries.OrderBy(x => x.IdSerie).ToList();
             }

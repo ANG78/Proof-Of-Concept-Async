@@ -18,12 +18,12 @@ namespace HowToWorkAsync.ImpHardcoded2
         protected override string M1()
         {
             var nameReflection = Adaptador(MethodBase.GetCurrentMethod());
-            _generator.Generate("001-" + nameReflection , -1);
+            _generator.WriteLineReport("001-" + nameReflection , -1);
             var cadena2 = Metodo2();
             var cadena3 = Metodo3();
 
             string cadena1 = this.TaskBase("01-" + nameReflection, 1);
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
 
             return cadena1 +  cadena2 + cadena3;
         }
@@ -56,11 +56,11 @@ namespace HowToWorkAsync.ImpHardcoded2
         protected override string M1()
         {
             var nameReflection = Adaptador(MethodBase.GetCurrentMethod());
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
             var cadena2 = Task<string>.Run(() => { return M2(); }).GetAwaiter();
             var cadena3 = Task<string>.Run(() => { return M3(); }).GetAwaiter();
             var cadena1 = Task<string>.Run(() => { return TaskBase("01-" + nameReflection, 1); } ).GetAwaiter();
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
             return cadena1.GetResult() + cadena2.GetResult() + cadena3.GetResult(); ;
         }
 

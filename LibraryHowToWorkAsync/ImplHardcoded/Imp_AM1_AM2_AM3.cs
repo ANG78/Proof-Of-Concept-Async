@@ -19,10 +19,10 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 1, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             var cadena2 = await M2Async();
             string cadena1 = this.TaskBase(literal, 1);
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena1 +  cadena2;
         }
 
@@ -30,10 +30,10 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 2, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             string cadena2 = await M3Async();
             string cadena1 = this.TaskBase(literal, 2);
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena1 + cadena2;
         }
 
@@ -41,13 +41,13 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 3, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             string cadena = "";
             await Task.Run(() =>
             {
                 cadena = this.TaskBase(literal, 3);
             });
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return (cadena);
         }
     }
@@ -66,12 +66,12 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 1, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             var cadena2 = M2Async();
             string cadena1 = TaskBase(literal, 1);
 
             string resultado2 = await cadena2;
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena1 + resultado2;
         }
 
@@ -79,12 +79,12 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 2, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             var cadena2 = M3Async();
             string cadena1 = TaskBase(literal, 2);
 
             string resultado2 = await cadena2;
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena1 + resultado2;
         }
 
@@ -92,14 +92,14 @@ namespace HowToWorkAsync.ImpHardcoded
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 3, true);
 
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             string cadena = "";
             var resul = Task.Run(() =>
             {
                 cadena = TaskBase(literal, 3);
             });
             await resul;
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena;
         }
 

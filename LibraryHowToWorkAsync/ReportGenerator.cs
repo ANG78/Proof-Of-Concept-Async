@@ -21,7 +21,7 @@ namespace HowToWorkAsync
         public List<string> cadenaFinal = new List<string>();
         Dictionary<string, Serie> _series = new Dictionary<string, Serie>();
 
-        public string Generate(string metod, int i, bool esTiempo = false)
+        public string WriteLineReport(string metod, int i, bool esTiempo = false)
         {
             string cadena;
             lock (toLock)
@@ -61,7 +61,7 @@ namespace HowToWorkAsync
 
         }
 
-        public Report GenateReportWithData()
+        public Report GenateDataReport()
         {
             Report informe = new Report();
             

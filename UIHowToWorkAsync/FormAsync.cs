@@ -133,11 +133,11 @@ namespace UIHowToWorkAsync
                     {
 
                         lanzador = new ProgramLanzador(reporter, implementacionMain);
-                        informe = await lanzador.LanzarImplementacionYObtenerSerie();
+                        informe = await lanzador.Run();
                     }
                     catch (Exception ex1)
                     {
-                        reporter.Generate("Ex1", -1);
+                        reporter.WriteLineReport("Ex1", -1);
                         MessageBox.Show(ex1.Message);
                     }
                // }
@@ -146,7 +146,7 @@ namespace UIHowToWorkAsync
             }
             catch (Exception ex)
             {
-                reporter.Generate("Ex2", -1);
+                reporter.WriteLineReport("Ex2", -1);
                 MessageBox.Show(ex.Message);
             }
             finally
@@ -161,7 +161,7 @@ namespace UIHowToWorkAsync
 
 
 
-            CrearProcesador().Ejecutar(informe);
+            CrearProcesador().Execute(informe);
             this.Enabled = true;
         }
 
@@ -175,7 +175,7 @@ namespace UIHowToWorkAsync
             this.Enabled = true;
         }
 
-        IStrategyProcesarInforme CrearProcesador()
+        IStrategyProcessReport CrearProcesador()
         {
             return new StrategyPintar(grafica,
                                       chkOrdernar.Checked,
@@ -197,7 +197,7 @@ namespace UIHowToWorkAsync
                 var proc = CrearProcesador();
                 if (aplicar)
                 {
-                    proc.Ejecutar(informe);
+                    proc.Execute(informe);
                 }
                 else
                 {

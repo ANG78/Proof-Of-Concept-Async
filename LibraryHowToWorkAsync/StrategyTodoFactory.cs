@@ -44,7 +44,7 @@ namespace HowToWorkAsync
             string cadena1 = "";
             for (int i = 1; i <= _count; i++)
             {
-                cadena1 = generateSerie.Generate(idSerie, i);
+                cadena1 = generateSerie.WriteLineReport(idSerie, i);
                 Thread.Sleep(5);
             }
             return cadena1;
@@ -68,10 +68,10 @@ namespace HowToWorkAsync
 
         public string Todo(string idSerie)
         {
-            _generaSerie.Generate(idSerie, _count, true);
+            _generaSerie.WriteLineReport(idSerie, _count, true);
             Console.Write("Dormir el hilo por.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
             Thread.Sleep(ETypeWork.SLEEPING.Factor() * _count);
-            return _generaSerie.Generate(idSerie, _count, true);
+            return _generaSerie.WriteLineReport(idSerie, _count, true);
         }
 
         public bool IsTime()

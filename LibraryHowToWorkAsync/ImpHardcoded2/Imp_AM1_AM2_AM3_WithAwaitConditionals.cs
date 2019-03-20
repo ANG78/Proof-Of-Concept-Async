@@ -16,7 +16,7 @@ namespace HowToWorkAsync.ImpHardcoded2
         protected override async Task<string> M1Async()
         {
             var nameReflection = Adaptador(MethodBase.GetCurrentMethod(), true);
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
             var cadena2 = M2Async();
             var cadena3 = M3Async();
 
@@ -37,7 +37,7 @@ namespace HowToWorkAsync.ImpHardcoded2
 
             string resultado2 = await cadena2;
             string resultado3 = await cadena3;
-            _generator.Generate("001-" + nameReflection, -1);
+            _generator.WriteLineReport("001-" + nameReflection, -1);
             return cadena1 + resultado2 + resultado3;
         }
 

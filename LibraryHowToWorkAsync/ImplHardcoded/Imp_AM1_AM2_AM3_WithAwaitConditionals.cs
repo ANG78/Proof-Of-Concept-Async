@@ -16,7 +16,7 @@ namespace HowToWorkAsync.ImpHardcoded
         protected override async Task<string> M1Async()
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 1, true);
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             var res2 = M2Async();
 
             string cadena = "";
@@ -35,7 +35,7 @@ namespace HowToWorkAsync.ImpHardcoded
 
             var cadena2 = await res2;
    
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena + cadena2;
         }
 
@@ -44,7 +44,7 @@ namespace HowToWorkAsync.ImpHardcoded
         private async Task<string> M2Async()
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 2, true);
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             var res3 = M3Async();
             string cadena = "";
             int cantidad = TaskBaseNumeroIteracionesOTiempo(literal, 2);
@@ -62,7 +62,7 @@ namespace HowToWorkAsync.ImpHardcoded
             }
 
             var cadena3 = await res3;
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             return cadena +  cadena3;
         }
 
@@ -71,7 +71,7 @@ namespace HowToWorkAsync.ImpHardcoded
         private async Task<string> M3Async()
         {
             string literal = ObtenerLiteralSerie(MethodBase.GetCurrentMethod(), 3, true);
-            _generator.Generate("0" + literal, -1);
+            _generator.WriteLineReport("0" + literal, -1);
             string cadena = "";
             int cantidad = TaskBaseNumeroIteracionesOTiempo(literal, 3);
             if (cantidad <= _umbral)
@@ -85,7 +85,7 @@ namespace HowToWorkAsync.ImpHardcoded
             {
                 cadena = this.TaskBase(literal + "NotWait", 3);
             }
-            _generator.Generate("0" +literal, -1);
+            _generator.WriteLineReport("0" +literal, -1);
             return (cadena);
         }
 

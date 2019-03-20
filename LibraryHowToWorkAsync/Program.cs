@@ -34,7 +34,7 @@ namespace HowToWorkAsync
         public Report Run2()
         {
             DateTime inicia = DateTime.Now;
-            _generaSerie.Generate("000" + "-RUN-", -1, false);
+            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
 
             string cadenaGenerada = "";
             if (_implementacion is IGetString)
@@ -46,17 +46,17 @@ namespace HowToWorkAsync
                 cadenaGenerada = ((IGetStringAsync)_implementacion).MainAsync().GetAwaiter().GetResult();             
             }
 
-            _generaSerie.Generate("000" + "-RUN-", -1, false);
-            var res = _generaSerie.GenateReportWithData();
+            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
+            var res = _generaSerie.GenateDataReport();
             res.Results = cadenaGenerada;
             return res;
 
         }
 
-        public async Task<Report> LanzarImplementacionYObtenerSerie()
+        public async Task<Report> Run()
         {
             DateTime inicia = DateTime.Now;
-            _generaSerie.Generate("000" + "-RUN-", -1, false);
+            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
 
             string cadenaGenerada = "";
             if (_implementacion is IGetString)
@@ -68,8 +68,8 @@ namespace HowToWorkAsync
                 cadenaGenerada = await ((IGetStringAsync)_implementacion).MainAsync();
             }
 
-            _generaSerie.Generate("000" + "-RUN-", -1, false);
-            var res = _generaSerie.GenateReportWithData();
+            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
+            var res = _generaSerie.GenateDataReport();
             res.Results = cadenaGenerada;
             return res;
 

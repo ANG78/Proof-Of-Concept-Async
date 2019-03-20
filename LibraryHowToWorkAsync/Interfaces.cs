@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace HowToWorkAsync
 {
-    public interface IStrategyProcesarInforme
+    public interface IStrategyProcessReport
     {
-        void Ejecutar(Report informe);
+        void Execute(Report informe);
         void Volcar(Report informe, string path);
     }
 
@@ -22,7 +22,7 @@ namespace HowToWorkAsync
     public class PointSerie
     {
         public string IdSerie { get; set; }
-        public string IdSerieAndIdThread { get { return IdSerie + " " + IdHilo; } }
+      //  public string IdSerieAndIdThread { get { return IdSerie + " " + IdHilo; } }
         public int X { get; set; }
         public int Y { get; set; }
         public DateTime When { get; set; }
@@ -58,16 +58,15 @@ namespace HowToWorkAsync
         ECallNext CallNext { get; set; }
         ETypeImpl TypeImplementation { get; set; }
         EventNextMethodWasChanged EventChange { get; set; }
-        String IdMethod { get; }
+        string IdMethod { get; }
         string ValidateConfigurations();
-
     }
 
 
     public interface IGenerateSerie
     {
-        string Generate(string metod, int i, bool esTiempo = false);
-        Report GenateReportWithData();
+        string WriteLineReport(string metod, int i, bool esTiempo = false);
+        Report GenateDataReport();
     }
 
     public interface IGetBase

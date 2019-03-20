@@ -2,133 +2,145 @@
 
 namespace HowToWorkAsync.ImpDynamic
 {
-    public class ImpGS : ClassTemplateImpl, IGetString, IGetLevel
+    public abstract class ImpGS : ClassTemplateImpl, IGetString, IGetLevel
     {
-        private delegate string MethodDelegate(string nameReflection);
-        private MethodDelegate algorith;
+        protected abstract string Body(string nameReflection);
 
         public ImpGS(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
         {
-            if (pNext == null)
-            {
-                algorith += MainFinal;
-            }
-            else
-            {
-                switch (pMethod.CallNext)
-                {
-                    case ECallNext.WAIT_FIRST:
-                        if (Next is IGetStringAsync)
-                        {
-                            algorith += MainNextAsync_WF;
-                        }
-                        else
-                        {
-                            algorith += MainNextSync_WF;
-                        }
-                        break;
-                    case ECallNext.WAIT_AFTER:
-                    case ECallNext.AWAITER_AFTER:
-                        if (Next is IGetStringAsync)
-                        {
-                            algorith += MainNextAsync_AWAITER;
-                        }
-                        else
-                        {
-                            algorith += MainNextSync_WA;
-                        }
-                        break;
-                    case ECallNext.NOT_WAIT:
-                        if (Next is IGetStringAsync)
-                        {
-                            algorith += MainNextAsync_NW;
-                        }
-                        else
-                        {
-                            algorith += MainNextSync_WA;
-                        }
-                        break;
-                }
-            }
+          
         }
 
         public string Main()
         {
-            var nameReflection = Adaptador(MethodBase.GetCurrentMethod());
-            GenerarCabeceraYPie(nameReflection);
+            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
+            GenerateHeaderAndFoot(nameReflection);
 
-            var result = algorith.Invoke(nameReflection);
+            var result = Body(nameReflection);
 
-            GenerarCabeceraYPie(nameReflection);
+            GenerateHeaderAndFoot(nameReflection);
             return result;
         }
 
-        public string MainNextAsync_NW(string nameReflection)
+    }
+
+    public class MainNextAsync_NW : ImpGS
+    {
+        public MainNextAsync_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
 
             var nextResult = ((IGetStringAsync)Next).MainAsync();
 
             var currentResult = MyWork(nameReflection);
-            GenerarLost(nameReflection);
+            GenerateLostPoint(nameReflection);
 
             var resultNextStrings = nextResult;
 
             return currentResult + resultNextStrings;
         }
+    }
 
-        public string MainNextAsync_AWAITER(string nameReflection)
+    public class MainNextAsync_AWAITER : ImpGS
+    {
+        public MainNextAsync_AWAITER(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
 
             var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
 
             var currentResult = MyWork(nameReflection);
-            GenerarLost(nameReflection);
+            GenerateLostPoint(nameReflection);
 
             var resultNextStrings = nextResult.GetResult();
 
             return currentResult + resultNextStrings;
         }
+    }
 
-        public string MainNextSync_WA(string nameReflection)
+    public class MainNextSync_WA : ImpGS
+    {
+        public MainNextSync_WA(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
             var nextResult = ((IGetString)Next);
 
             var currentResult = MyWork(nameReflection);
-            GenerarLost(nameReflection);
+            GenerateLostPoint(nameReflection);
 
             var resultNextStrings = ((IGetString)nextResult).Main();
 
             return currentResult + resultNextStrings;
         }
+    }
 
-        public string MainNextAsync_WF(string nameReflection)
+
+    public class MainNextAsync_WF : ImpGS
+    {
+        public MainNextAsync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
             var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
 
             var currentResult = MyWork(nameReflection);
-            GenerarLost(nameReflection);
+            GenerateLostPoint(nameReflection);
 
             var resultNextStrings = nextResult;
 
             return currentResult + resultNextStrings;
 
         }
+    }
 
-        public string MainNextSync_WF(string nameReflection)
+    public class MainNextSync_WF : ImpGS
+    {
+
+        public MainNextSync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
             var nextResult = ((IGetString)Next).Main();
 
             var currentResult = MyWork(nameReflection);
-            GenerarLost(nameReflection);
+            GenerateLostPoint(nameReflection);
 
             var resultNextStrings = nextResult;
             return currentResult + resultNextStrings;
         }
+    }
 
-        public string MainFinal(string nameReflection)
+    public class MainFinal : ImpGS
+    {
+        public MainFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
+           : base(gen, pProcesamiento, pMethod, pNext)
+        {
+        }
+
+        protected override string Body(string nameReflection)
         {
             return MyWork(nameReflection);
         }
     }
+    
+
 }

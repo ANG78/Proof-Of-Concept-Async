@@ -1,39 +1,36 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace HowToWorkAsync.ImpDynamic
 {
 
     public abstract class ClassBaseImpl : IGetLevel
     {
-        protected IStrategyTodo procesamiento;
+        protected IStrategyTodo WhatTodo;
         protected IGenerateSerie generator { get; set; }
         public uint Level { get;  set; }
 
         public ClassBaseImpl(IGenerateSerie gen, IStrategyTodo pProcesamiento)
         {
-            procesamiento = pProcesamiento;
+            WhatTodo = pProcesamiento;
             generator = gen;
         }
 
-        public string Identificador()
+        public string Ident()
         {
             return "0" + Level + ((this is IGetString) ? "-Main" : "-MainAsync");
         }
 
         protected string TaskBase(string cadena, uint numProc)
         {
-            return procesamiento.Todo(cadena);
+            return WhatTodo.Todo(cadena);
         }
 
         protected int TaskBaseNumeroIteracionesOTiempo(string cadena, uint numProc)
         {
-            return procesamiento.AmountOfStepsOrMls();
+            return WhatTodo.AmountOfStepsOrMls();
         }
 
-        protected string Adaptador(MethodBase nameMetodo, bool obtenerNombreDesdeDeclaracion = false)
+        protected string GetNameMethod(MethodBase nameMetodo, bool obtenerNombreDesdeDeclaracion = false)
         {
             if (!obtenerNombreDesdeDeclaracion)
                 return nameMetodo.Name;
@@ -43,7 +40,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public string ObtenerLiteralSerie(MethodBase metodo, uint i, bool obtenerNombreDesdeDeclaracion = false)
         {
-            var nameReflection = Adaptador(metodo, obtenerNombreDesdeDeclaracion);
+            var nameReflection = GetNameMethod(metodo, obtenerNombreDesdeDeclaracion);
             string codFuncion = "0" + i + "-";
             return codFuncion + nameReflection;
         }
@@ -53,14 +50,14 @@ namespace HowToWorkAsync.ImpDynamic
             return TaskBase("0" + Level + "-" + literal, Level);
         }
 
-        public void GenerarCabeceraYPie(string literal)
+        public void GenerateHeaderAndFoot(string literal)
         {
-            generator.Generate("00" + Level + "-" + literal, (int)Level);
+            generator.WriteLineReport("00" + Level + "-" + literal, (int)Level);
         }
 
-        public void GenerarLost(string literal)
+        public void GenerateLostPoint(string literal)
         {
-            generator.Generate("0" + Level + "-" + literal + "LOST", (int)Level);
+            generator.WriteLineReport("0" + Level + "-" + literal + "LOST", (int)Level);
         }
 
     }
