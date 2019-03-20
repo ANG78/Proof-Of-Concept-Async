@@ -13,14 +13,17 @@ namespace HowToWorkAsync.Process
         readonly bool chkSerieWithoutIds;
         readonly bool chkHilos;
         readonly bool chkTiempoTicks;
+        readonly bool chkStartAndEnd;
         readonly SeriesChartType cmbTypeOfGraphic;
+
 
         public StrategyPintar(Chart pgrafica,
                               bool pchkOrdernar,
                               bool pchkSerie,
                               bool pchkSerieSinIds,
                               bool pchkHilos,
-                              bool pchkTiempoTicks, 
+                              bool pchkTiempoTicks,
+                              bool pchkStartAndEnd,
                               SeriesChartType pcmbTipoGrafica
                             )
         {
@@ -30,6 +33,7 @@ namespace HowToWorkAsync.Process
             chkHilos = pchkHilos;
             chkTiempoTicks = pchkTiempoTicks;
             cmbTypeOfGraphic = pcmbTipoGrafica;
+            chkStartAndEnd = pchkStartAndEnd;
             chkSerieWithoutIds = pchkSerieSinIds;
         }
 
@@ -51,6 +55,7 @@ namespace HowToWorkAsync.Process
             if (listadorSeries.Count == 0)
                 throw new Exception("Fallo de impl, el listado de series no puede estar nula");
 
+
             if (chkOrder)
             {
                 listadorSeries = listadorSeries.OrderByDescending(x => x.IdSerie).ToList();
@@ -64,22 +69,28 @@ namespace HowToWorkAsync.Process
                     int iPos = aux.IdSerie.LastIndexOf("#");
                     if (iPos > 0)
                     {
-                        string idAux = aux.IdSerie.Substring(0,  iPos);
-                        if (!seriesWithIdThread.ContainsKey(idAux) )
+                        string idAux = aux.IdSerie.Substring(0, iPos);
+                        if (!seriesWithIdThread.ContainsKey(idAux))
                         {
-                            seriesWithIdThread[idAux] = new List<Serie> ();
+                            seriesWithIdThread[idAux] = new List<Serie>();
                         }
                         seriesWithIdThread[idAux].Add(aux);
                     }
-                    
+
                 }
 
             }
-            
+
 
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
+                if (chkStartAndEnd == false && serieExtraida.IdSerie.StartsWith("000") )
+                {
+                    continue;
+                }
+
+
                 Series serie = chart.Series.Add(serieExtraida.IdSerie);
 
                 var points = serieExtraida.Points;
@@ -89,7 +100,7 @@ namespace HowToWorkAsync.Process
                 if (points.Count == 1)
                     points.Add(new PointSerie() { Y = -1, X = points[0].X, IdHilo = points[0].IdHilo, When = points[0].When });
 
-                tiemposExtraidos += " [" + serieExtraida.IdSerie + ":" + serieExtraida.TiempoEntreInicioYFinEnMilisegundos() + " mls]   ";
+                tiemposExtraidos += " [" + serieExtraida.IdSerie + ":" + serieExtraida.ElapsedTime() + " mls]   ";
 
                 serie.ChartType = cmbTypeOfGraphic;
                 serie.BorderDashStyle = ChartDashStyle.Solid;
@@ -101,7 +112,7 @@ namespace HowToWorkAsync.Process
                     if (chkHilos)
                     {
                         serie.Points.AddXY(chkTiempoTicks ? points[j].When.Ticks : points[j].X, points[j].IdHilo);
-                        if (chkSerie && (j == points.Count - 1 || j==0))
+                        if (chkSerie && (j == points.Count - 1 || j == 0))
                             serie.Points[j].Label = points[j].IdSerie;
                     }
                     else
@@ -119,7 +130,7 @@ namespace HowToWorkAsync.Process
 
         }
 
-        public void Volcar(Report informe, string path)
+        public void WriteToFile(Report informe, string path)
         {
             List<string> cadenaFinal = new List<string>();
 

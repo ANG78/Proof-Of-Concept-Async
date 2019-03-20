@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-
-
+using UIConclusionesAsync;
 
 namespace UIHowToWorkAsync
 {
@@ -39,7 +38,7 @@ namespace UIHowToWorkAsync
             }
             cmbTipoGrafica.SelectedItem = SeriesChartType.Point;
             bttCreateMethods_Click(this, null);
-            
+
         }
 
         private void bttCreateMethods_Click(object sender, EventArgs e)
@@ -75,7 +74,7 @@ namespace UIHowToWorkAsync
                 Met.Size = new System.Drawing.Size(446, 89);
                 Met.TabIndex = 30;
                 Met.TypeWork = DefaultETypeWork;
-                Met.TypeImplementation = DefaultETypeImplementation;
+                Met.TypeNextImpl = DefaultETypeImplementation;
                 Met.CallNext = DefaultECallNext;
 
                 topLocation = i * (Met.Height + 1);
@@ -101,20 +100,22 @@ namespace UIHowToWorkAsync
 
         private async void bttRun_Click(object sender, EventArgs e)
         {
-            if (Method == null )
+            if (Method == null)
             {
                 MessageBox.Show("The test is not well configured");
                 return;
             }
-                
 
-            string validation =Method.ValidateConfigurations();
+            bttPrint.Visible = false;
+
+
+            string validation = Method.ValidateConfigurations();
             if (!string.IsNullOrEmpty(validation))
             {
                 MessageBox.Show(validation);
                 return;
             }
-            
+
 
             this.Enabled = false; /*deshabilita pantalla*/
 
@@ -124,29 +125,29 @@ namespace UIHowToWorkAsync
             try
             {
 
-               // await Task.Run(() =>
-              //  {
-                    ProgramLanzador lanzador = null;
-                    implementacionMain = HowToWorkAsync.ImpDynamic.FactoryImplClass.GetInstance(Method, reporter);
+                // await Task.Run(() =>
+                //  {
+                Launcher lanzador = null;
+                implementacionMain = HowToWorkAsync.ImpDynamic.FactoryImpl.GetInstance(Method, reporter);
 
-                    try
-                    {
+                try
+                {
 
-                        lanzador = new ProgramLanzador(reporter, implementacionMain);
-                        informe = await lanzador.Run();
-                    }
-                    catch (Exception ex1)
-                    {
-                        reporter.WriteLineReport("Ex1", -1);
-                        MessageBox.Show(ex1.Message);
-                    }
-               // }
-              //);
+                    lanzador = new Launcher(reporter, implementacionMain);
+                    informe = await lanzador.Run();
+                }
+                catch (Exception ex1)
+                {
+                    reporter.FillingOutTheReport("Ex1", -1);
+                    MessageBox.Show(ex1.Message);
+                }
+                // }
+                //);
 
             }
             catch (Exception ex)
             {
-                reporter.WriteLineReport("Ex2", -1);
+                reporter.FillingOutTheReport("Ex2", -1);
                 MessageBox.Show(ex.Message);
             }
             finally
@@ -154,15 +155,9 @@ namespace UIHowToWorkAsync
             }
 
 
-
-            PrintMethods printer = new PrintMethods(tree);
-            printer.Print(Method);
-
-
-
-
             CrearProcesador().Execute(informe);
             this.Enabled = true;
+            bttPrint.Visible = true;
         }
 
         private void cmbTipoGrafica_SelectedIndexChanged(object sender, EventArgs e)
@@ -183,6 +178,7 @@ namespace UIHowToWorkAsync
                                       chConId.Checked,
                                       chkHilos.Checked,
                                       chkTiempoTicks.Checked,
+                                      this.chkStartEnd.Checked,
                                       (SeriesChartType)cmbTipoGrafica.SelectedItem);
         }
 
@@ -201,7 +197,7 @@ namespace UIHowToWorkAsync
                 }
                 else
                 {
-                    proc.Volcar(informe, "c:\\volcar" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_") + ".csv");
+                    proc.WriteToFile(informe, "c:\\volcar" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_") + ".csv");
                 }
 
             }
@@ -240,6 +236,16 @@ namespace UIHowToWorkAsync
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void bttPrint_Click(object sender, EventArgs e)
+        {
+            if (Method != null)
+            {
+                var form = new FormTree();
+                form.Print(Method);
+                bttPrint.Visible = false;
+            }
         }
     }
 }

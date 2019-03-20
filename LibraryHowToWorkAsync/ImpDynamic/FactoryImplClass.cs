@@ -1,6 +1,6 @@
 ﻿namespace HowToWorkAsync.ImpDynamic
 {
-    public class FactoryImplClass
+    public class FactoryImpl
     {
 
         public static IGetBase GetInstance(IUseMethod method, IGenerateSerie reporter)
@@ -10,11 +10,11 @@
 
 
             var lastClass = GetInstance(method.Next, reporter);
-            if (method.TypeImplementation == ETypeImpl.ASYNC)
+            if (method.TypeNextImpl == ETypeImpl.ASYNC)
             {
                 return GetInstanceAsync(method, reporter, lastClass);
             }
-            else if (method.TypeImplementation == ETypeImpl.SYNC)
+            else if (method.TypeNextImpl == ETypeImpl.SYNC)
             {
                 return GetInstanceNoAsync(method, reporter, lastClass);
             }

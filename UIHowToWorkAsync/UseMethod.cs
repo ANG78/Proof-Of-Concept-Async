@@ -9,10 +9,15 @@ namespace UIHowToWorkAsync
     public partial class UseMethod : UserControl, IUseMethod
     {
 
-        
+
         public UseMethod()
         {
             InitializeComponent();
+
+            foreach (var aux in Enum.GetValues(typeof(ETypeImpl)))
+            {
+                cmbMyImpl.Items.Add(aux);
+            }
 
             foreach (var aux in Enum.GetValues(typeof(ETypeWork)))
             {
@@ -21,7 +26,7 @@ namespace UIHowToWorkAsync
 
             foreach (var aux in Enum.GetValues(typeof(ETypeImpl)))
             {
-                cmbImplementation.Items.Add(aux);
+                cmbNextImpl.Items.Add(aux);
             }
 
             SetValuesCall();
@@ -29,6 +34,8 @@ namespace UIHowToWorkAsync
             SetLabelUnit();
 
             EventChangeTheLastMethod += EventNextNullHandler;
+
+            MyImpl = ETypeImpl.SYNC;
         }
 
         private void trackMetodo1_Scroll(object sender, EventArgs e)
@@ -50,15 +57,15 @@ namespace UIHowToWorkAsync
         {
             foreach (var aux in Enum.GetValues(typeof(ECallNext)))
             {
-                cmbAlg.Items.Add(aux);
+                cmbNextAlg.Items.Add(aux);
             }
         }
 
 
         private void cmbImplementation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EventChange?.Invoke((ETypeImpl)cmbImplementation.SelectedIndex);
-            EventChangeTheLastMethod?.Invoke((ETypeImpl)cmbImplementation.SelectedIndex);
+            EventChange?.Invoke((ETypeImpl)cmbNextImpl.SelectedIndex);
+            EventChangeTheLastMethod?.Invoke((ETypeImpl)cmbNextImpl.SelectedIndex);
         }
 
         private void groupBoxMethod_Enter(object sender, EventArgs e)
@@ -66,29 +73,6 @@ namespace UIHowToWorkAsync
 
         }
 
-        delegate void MethodSetDelegate(Control control, MethodAux v);
-        delegate T MethodGetDelegate<T>(Control control, MethodGetAux<T> v);
-        delegate void MethodAux();
-        delegate T MethodGetAux<T>();
-
-
-        private void ModifyMethod(Control control, MethodAux v)
-        {
-            if (control.InvokeRequired)
-            {
-                control.Invoke(new MethodSetDelegate(ModifyMethod), control, v);
-            }
-            v.Invoke();
-        }
-
-        private T GetMethod<T>(Control control, MethodGetAux<T> v)
-        {
-            if (control.InvokeRequired)
-            {
-                return (T)control.Invoke(new MethodGetDelegate<T>(GetMethod<T>), control, v);
-            }
-            return v.Invoke();
-        }
 
 
 
@@ -97,11 +81,11 @@ namespace UIHowToWorkAsync
             get
             {
 
-                return GetMethod(cmb, () => { return (ETypeWork)cmb.SelectedIndex; });
+                return HelperUI.GetMethod(cmb, () => { return (ETypeWork)cmb.SelectedIndex; });
             }
             set
             {
-                ModifyMethod(cmb, () => { cmb.SelectedIndex = (int)value; });
+                HelperUI.ModifyMethod(cmb, () => { cmb.SelectedIndex = (int)value; });
             }
         }
 
@@ -109,58 +93,60 @@ namespace UIHowToWorkAsync
         {
             get
             {
-                return GetMethod(trackMethod, () => { return trackMethod.Value; });
+                return HelperUI.GetMethod(trackMethod, () => { return trackMethod.Value; });
             }
             set
             {
-                ModifyMethod(trackMethod, () => { trackMethod.Value = (int)value; });
+                HelperUI.ModifyMethod(trackMethod, () => { trackMethod.Value = (int)value; });
             }
 
         }
 
         private void EventNextHandler(ETypeImpl newType)
         {
-            ModifyMethod(cmbAlg, () => { 
-
-            var newValues = newType.HowToBeCalled();
-
-            var t2 = cmbAlg.SelectedItem;
-            cmbAlg.Items.Clear();
-            foreach (var aux in newValues)
+            HelperUI.ModifyMethod(cmbNextAlg, () =>
             {
-                cmbAlg.Items.Add(aux);
-            }
 
-            if (t2 != null && cmbAlg.Items.Contains(t2))
-            {
-                cmbAlg.SelectedItem = t2;
-            }
+                var newValues = newType.HowToBeCalled();
+
+                var t2 = cmbNextAlg.SelectedItem;
+                cmbNextAlg.Items.Clear();
+                foreach (var aux in newValues)
+                {
+                    cmbNextAlg.Items.Add(aux);
+                }
+
+                if (t2 != null && cmbNextAlg.Items.Contains(t2))
+                {
+                    cmbNextAlg.SelectedItem = t2;
+                }
             });
 
         }
 
         private void EventNextNullHandler(ETypeImpl newType)
         {
-            ModifyMethod(cmbAlg, () => {
+            HelperUI.ModifyMethod(cmbNextAlg, () =>
+            {
 
                 var newValues = newType.HowToBeCalled();
 
-                var t2 = cmbAlg.SelectedItem;
-                cmbAlg.Items.Clear();
+                var t2 = cmbNextAlg.SelectedItem;
+                cmbNextAlg.Items.Clear();
                 foreach (var aux in newValues)
                 {
-                    cmbAlg.Items.Add(aux);
+                    cmbNextAlg.Items.Add(aux);
                 }
 
-                if (t2 != null && cmbAlg.Items.Contains(t2))
+                if (t2 != null && cmbNextAlg.Items.Contains(t2))
                 {
-                    cmbAlg.SelectedItem = t2;
+                    cmbNextAlg.SelectedItem = t2;
                 }
             });
 
         }
 
-        
+
 
         IUseMethod next = null;
         public IUseMethod Next
@@ -191,31 +177,40 @@ namespace UIHowToWorkAsync
             set
             {
                 level = value;
-                ModifyMethod(cmbAlg, () => { this.groupBoxMethod.Text = "Method" + level; });
+                HelperUI.ModifyMethod(cmbNextAlg, () => { this.groupBoxMethod.Text = "Method" + level; });
             }
         }
 
 
         public ECallNext CallNext
         {
-            get => GetMethod(cmbAlg, () => { return (ECallNext)cmbAlg.SelectedIndex; });
-            set => ModifyMethod(cmbAlg, () => { cmbAlg.SelectedIndex = (int)value; });
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ECallNext)cmbNextAlg.SelectedIndex; });
+            set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbNextAlg.SelectedIndex = (int)value; });
         }
 
-        public ETypeImpl TypeImplementation
+
+        public ETypeImpl MyImpl
         {
-            get => GetMethod(cmbAlg, () => { return (ETypeImpl)cmbImplementation.SelectedIndex; });
-            set => ModifyMethod(cmbAlg, () => { cmbImplementation.SelectedIndex = (int)value; });
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbMyImpl.SelectedIndex; });
+            set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbMyImpl.SelectedIndex = (int)value; });
         }
-        public EventNextMethodWasChanged EventChange { get ; set; }
+        
+        public ETypeImpl TypeNextImpl
+        {
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbNextImpl.SelectedIndex; });
+            set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbNextImpl.SelectedIndex = (int)value; });
+        }
+        public EventNextMethodWasChanged EventChange { get; set; }
         public EventNextMethodWasChanged EventChangeTheLastMethod { get; set; }
 
-        public string IdMethod => GetMethod(groupBoxMethod, () => { return (string)groupBoxMethod.Text; });
+        public string IdMethod => HelperUI.GetMethod(groupBoxMethod, () => { return (string)groupBoxMethod.Text; });
 
+        public IGetBase Implementation { get; set; }
+        
 
         private void SetLabelUnit()
         {
-            ModifyMethod(lblTrack, () =>
+            HelperUI.ModifyMethod(lblTrack, () =>
             {
                 var selected = (ETypeWork)cmb.SelectedIndex;
                 lblTrack.Text = this.trackMethod.Value * selected.Factor() + " " + selected.Unit();
@@ -229,23 +224,32 @@ namespace UIHowToWorkAsync
 
         public string ValidateConfigurations()
         {
-            if (Next != null)
+            HelperUI.GetMethod(this, () =>
             {
-                if ((int)CallNext == -1)
+
+                if (Next != null)
                 {
-                    return "CallNext  is not well selected For Method Level " + level;
+                    if ((int)CallNext == -1)
+                    {
+                        return "CallNext  is not well selected For Method Level " + level;
+                    }
+
+                    string resultNExt = Next.ValidateConfigurations();
+                    if (!string.IsNullOrEmpty(resultNExt))
+                    {
+                        return resultNExt;
+                    }
+
                 }
 
-                string resultNExt = Next.ValidateConfigurations();
-                if (!string.IsNullOrEmpty(resultNExt))
-                {
-                    return resultNExt;
-                }
-
-            }
-
+                return null;
+            });
             return null;
         }
 
+        private void cmbNextAlg_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

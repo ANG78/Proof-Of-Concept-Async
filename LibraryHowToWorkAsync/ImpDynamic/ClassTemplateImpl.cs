@@ -1,13 +1,14 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 
 namespace HowToWorkAsync.ImpDynamic
 {
 
-    public abstract class ClassBaseImpl : IGetLevel
+    public abstract class ClassBaseImpl
     {
         protected IStrategyTodo WhatTodo;
         protected IGenerateSerie generator { get; set; }
-        public uint Level { get;  set; }
+        public uint Level { get; set; }
 
         public ClassBaseImpl(IGenerateSerie gen, IStrategyTodo pProcesamiento)
         {
@@ -30,39 +31,38 @@ namespace HowToWorkAsync.ImpDynamic
             return WhatTodo.AmountOfStepsOrMls();
         }
 
-        protected string GetNameMethod(MethodBase nameMetodo, bool obtenerNombreDesdeDeclaracion = false)
+        protected string GetNameMethod(MethodBase nameMetodo)
         {
-            if (!obtenerNombreDesdeDeclaracion)
-                return nameMetodo.Name;
-            else
+            if (nameMetodo.Name.Contains("MoveNext"))
+            {
                 return nameMetodo.DeclaringType.Name.Substring(0, nameMetodo.DeclaringType.Name.IndexOf(">")).Replace("<", "");
+            }
+            else
+            {
+                return nameMetodo.Name;
+            }
         }
 
-        public string ObtenerLiteralSerie(MethodBase metodo, uint i, bool obtenerNombreDesdeDeclaracion = false)
+        public string ObtenerLiteralSerie(MethodBase metodo, uint i)
         {
-            var nameReflection = GetNameMethod(metodo, obtenerNombreDesdeDeclaracion);
+            var nameReflection = GetNameMethod(metodo);
             string codFuncion = "0" + i + "-";
             return codFuncion + nameReflection;
         }
 
-        public string MyWork(string literal)
-        {
-            return TaskBase("0" + Level + "-" + literal, Level);
-        }
-
         public void GenerateHeaderAndFoot(string literal)
         {
-            generator.WriteLineReport("00" + Level + "-" + literal, (int)Level);
+            generator.FillingOutTheReport("00" + Level + "-" + literal, (int)Level);
         }
 
         public void GenerateLostPoint(string literal)
         {
-            generator.WriteLineReport("0" + Level + "-" + literal + "LOST", (int)Level);
+            generator.FillingOutTheReport("0" + Level + "-" + literal + "LOST", (int)Level);
         }
 
     }
 
-    public abstract class ClassTemplateImpl : ClassBaseImpl  /*IStrategyVisitable,*/
+    public abstract class ClassTemplateImpl : ClassBaseImpl
     {
         protected IGetBase Next { get; private set; }
         protected IUseMethod Method;
@@ -73,11 +73,19 @@ namespace HowToWorkAsync.ImpDynamic
             Next = pNext;
             Method = pMethod;
             Level = (uint)pMethod.Level;
+            pMethod.Implementation = (IGetBase)this;
         }
-        //public abstract void Accept(IStrategyVisitor ac);
 
+        public string MyWork(string literal)
+        {
+            return TaskBase("0" + Level + "-" + literal, Level);            
+        }
+
+        public abstract string MyWorkDescription();
+        public abstract string CallNextDescription();
+        public abstract string HowToGetResultNextDescription();
     }
 
-    
+
 }
 

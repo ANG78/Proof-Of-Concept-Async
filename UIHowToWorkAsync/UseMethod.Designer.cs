@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.groupBoxMethod = new System.Windows.Forms.GroupBox();
-            this.cmbImplementation = new System.Windows.Forms.ComboBox();
+            this.cmbNextImpl = new System.Windows.Forms.ComboBox();
             this.groupTodo = new System.Windows.Forms.GroupBox();
+            this.cmbMyImpl = new System.Windows.Forms.ComboBox();
             this.cmb = new System.Windows.Forms.ComboBox();
             this.lblTrack = new System.Windows.Forms.Label();
             this.trackMethod = new System.Windows.Forms.TrackBar();
-            this.cmbAlg = new System.Windows.Forms.ComboBox();
+            this.cmbNextAlg = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxMethod.SuspendLayout();
             this.groupTodo.SuspendLayout();
@@ -46,9 +47,9 @@
             this.groupBoxMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxMethod.Controls.Add(this.cmbImplementation);
+            this.groupBoxMethod.Controls.Add(this.cmbNextImpl);
             this.groupBoxMethod.Controls.Add(this.groupTodo);
-            this.groupBoxMethod.Controls.Add(this.cmbAlg);
+            this.groupBoxMethod.Controls.Add(this.cmbNextAlg);
             this.groupBoxMethod.Controls.Add(this.label2);
             this.groupBoxMethod.Location = new System.Drawing.Point(3, 0);
             this.groupBoxMethod.Name = "groupBoxMethod";
@@ -58,18 +59,19 @@
             this.groupBoxMethod.Text = "Method";
             this.groupBoxMethod.Enter += new System.EventHandler(this.groupBoxMethod_Enter);
             // 
-            // cmbImplementation
+            // cmbNextImpl
             // 
-            this.cmbImplementation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbImplementation.FormattingEnabled = true;
-            this.cmbImplementation.Location = new System.Drawing.Point(305, 23);
-            this.cmbImplementation.Name = "cmbImplementation";
-            this.cmbImplementation.Size = new System.Drawing.Size(62, 21);
-            this.cmbImplementation.TabIndex = 14;
-            this.cmbImplementation.SelectedIndexChanged += new System.EventHandler(this.cmbImplementation_SelectedIndexChanged);
+            this.cmbNextImpl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNextImpl.FormattingEnabled = true;
+            this.cmbNextImpl.Location = new System.Drawing.Point(305, 23);
+            this.cmbNextImpl.Name = "cmbNextImpl";
+            this.cmbNextImpl.Size = new System.Drawing.Size(62, 21);
+            this.cmbNextImpl.TabIndex = 14;
+            this.cmbNextImpl.SelectedIndexChanged += new System.EventHandler(this.cmbImplementation_SelectedIndexChanged);
             // 
             // groupTodo
             // 
+            this.groupTodo.Controls.Add(this.cmbMyImpl);
             this.groupTodo.Controls.Add(this.cmb);
             this.groupTodo.Controls.Add(this.lblTrack);
             this.groupTodo.Controls.Add(this.trackMethod);
@@ -79,11 +81,20 @@
             this.groupTodo.TabIndex = 13;
             this.groupTodo.TabStop = false;
             // 
+            // cmdMyImpl
+            // 
+            this.cmbMyImpl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMyImpl.FormattingEnabled = true;
+            this.cmbMyImpl.Location = new System.Drawing.Point(143, 10);
+            this.cmbMyImpl.Name = "cmdMyImpl";
+            this.cmbMyImpl.Size = new System.Drawing.Size(62, 21);
+            this.cmbMyImpl.TabIndex = 15;
+            // 
             // cmb
             // 
             this.cmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmb.FormattingEnabled = true;
-            this.cmb.Location = new System.Drawing.Point(143, 22);
+            this.cmb.Location = new System.Drawing.Point(143, 32);
             this.cmb.Name = "cmb";
             this.cmb.Size = new System.Drawing.Size(109, 21);
             this.cmb.TabIndex = 13;
@@ -112,14 +123,15 @@
             this.trackMethod.Value = 50;
             this.trackMethod.Scroll += new System.EventHandler(this.trackMethod_Scroll);
             // 
-            // cmbAlg
+            // cmbNextAlg
             // 
-            this.cmbAlg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAlg.FormattingEnabled = true;
-            this.cmbAlg.Location = new System.Drawing.Point(305, 50);
-            this.cmbAlg.Name = "cmbAlg";
-            this.cmbAlg.Size = new System.Drawing.Size(109, 21);
-            this.cmbAlg.TabIndex = 12;
+            this.cmbNextAlg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNextAlg.FormattingEnabled = true;
+            this.cmbNextAlg.Location = new System.Drawing.Point(305, 50);
+            this.cmbNextAlg.Name = "cmbNextAlg";
+            this.cmbNextAlg.Size = new System.Drawing.Size(109, 21);
+            this.cmbNextAlg.TabIndex = 12;
+            this.cmbNextAlg.SelectedIndexChanged += new System.EventHandler(this.cmbNextAlg_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -150,11 +162,12 @@
 
         private System.Windows.Forms.GroupBox groupBoxMethod;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cmbAlg;
+        private System.Windows.Forms.ComboBox cmbNextAlg;
         private System.Windows.Forms.GroupBox groupTodo;
         private System.Windows.Forms.Label lblTrack;
         private System.Windows.Forms.TrackBar trackMethod;
         private System.Windows.Forms.ComboBox cmb;
-        private System.Windows.Forms.ComboBox cmbImplementation;
+        private System.Windows.Forms.ComboBox cmbNextImpl;
+        private System.Windows.Forms.ComboBox cmbMyImpl;
     }
 }

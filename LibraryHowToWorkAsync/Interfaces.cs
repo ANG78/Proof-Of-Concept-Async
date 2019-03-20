@@ -7,8 +7,8 @@ namespace HowToWorkAsync
 {
     public interface IStrategyProcessReport
     {
-        void Execute(Report informe);
-        void Volcar(Report informe, string path);
+        void Execute(Report report);
+        void WriteToFile(Report informe, string path);
     }
 
     public class Report
@@ -22,7 +22,7 @@ namespace HowToWorkAsync
     public class PointSerie
     {
         public string IdSerie { get; set; }
-      //  public string IdSerieAndIdThread { get { return IdSerie + " " + IdHilo; } }
+        //  public string IdSerieAndIdThread { get { return IdSerie + " " + IdHilo; } }
         public int X { get; set; }
         public int Y { get; set; }
         public DateTime When { get; set; }
@@ -36,7 +36,7 @@ namespace HowToWorkAsync
         public bool IsTime { get; set; } = false;
         public List<PointSerie> Points { get; private set; } = new List<PointSerie>();
 
-        public long TiempoEntreInicioYFinEnMilisegundos()
+        public long ElapsedTime()
         {
             var min = Points.Select(x => x.When).Min();
             var max = Points.Select(x => x.When).Max();
@@ -47,7 +47,7 @@ namespace HowToWorkAsync
     }
 
     public delegate void EventNextMethodWasChanged(ETypeImpl newType);
-   
+
 
     public interface IUseMethod
     {
@@ -55,34 +55,31 @@ namespace HowToWorkAsync
         ETypeWork TypeWork { get; set; }
         int NumSteps { get; set; }
         int Level { get; set; }
-        ECallNext CallNext { get; set; }
-        ETypeImpl TypeImplementation { get; set; }
         EventNextMethodWasChanged EventChange { get; set; }
         string IdMethod { get; }
         string ValidateConfigurations();
+        IGetBase Implementation { get; set; }
+        ECallNext CallNext { get; set; }
+        ETypeImpl TypeNextImpl { get; set; }
+        ETypeImpl MyImpl { get; set; }
     }
 
 
     public interface IGenerateSerie
     {
-        string WriteLineReport(string metod, int i, bool esTiempo = false);
-        Report GenateDataReport();
+        string FillingOutTheReport(string metod, int i, bool esTiempo = false);
+        Report GenateReport();
     }
 
     public interface IGetBase
     {
-    }
-
-    public interface IGetLevel
-    {
+        string MyWorkDescription();
+        string CallNextDescription();
+        string HowToGetResultNextDescription();
         uint Level { get; set; }
-
-    }
-
-    public interface IGetId
-    {
         string Ident();
     }
+
 
     public interface IGetString : IGetBase
     {
@@ -155,7 +152,7 @@ namespace HowToWorkAsync
                             result.Add((ECallNext)aux);
                         }
                         return result;
-                        
+
                     }
             }
 

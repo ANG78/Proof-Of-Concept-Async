@@ -28,12 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.PTop = new System.Windows.Forms.Panel();
-            this.tree = new System.Windows.Forms.TreeView();
             this.cmbTipoGrafica = new System.Windows.Forms.ComboBox();
             this.chkTiempoTicks = new System.Windows.Forms.CheckBox();
             this.chkOrdernar = new System.Windows.Forms.CheckBox();
@@ -53,7 +52,8 @@
             this.panelMethodsFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.PLeftMain = new System.Windows.Forms.Panel();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.PTop.SuspendLayout();
+            this.bttPrint = new System.Windows.Forms.Button();
+            this.chkStartEnd = new System.Windows.Forms.CheckBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).BeginInit();
             this.options.SuspendLayout();
@@ -75,23 +75,13 @@
             // 
             // PTop
             // 
-            this.PTop.Controls.Add(this.tree);
             this.PTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.PTop.Location = new System.Drawing.Point(361, 0);
             this.PTop.Margin = new System.Windows.Forms.Padding(0);
             this.PTop.MinimumSize = new System.Drawing.Size(0, 5);
             this.PTop.Name = "PTop";
-            this.PTop.Size = new System.Drawing.Size(716, 118);
+            this.PTop.Size = new System.Drawing.Size(716, 10);
             this.PTop.TabIndex = 2;
-            // 
-            // tree
-            // 
-            this.tree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tree.Location = new System.Drawing.Point(0, 0);
-            this.tree.Margin = new System.Windows.Forms.Padding(0);
-            this.tree.Name = "tree";
-            this.tree.Size = new System.Drawing.Size(716, 118);
-            this.tree.TabIndex = 25;
             // 
             // cmbTipoGrafica
             // 
@@ -168,7 +158,7 @@
             this.splitterTop.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.splitterTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitterTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitterTop.Location = new System.Drawing.Point(361, 118);
+            this.splitterTop.Location = new System.Drawing.Point(361, 10);
             this.splitterTop.Name = "splitterTop";
             this.splitterTop.Size = new System.Drawing.Size(716, 5);
             this.splitterTop.TabIndex = 3;
@@ -179,31 +169,33 @@
             this.panel3.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panel3.Controls.Add(this.grafica);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(361, 123);
+            this.panel3.Location = new System.Drawing.Point(361, 15);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(716, 458);
+            this.panel3.Size = new System.Drawing.Size(716, 566);
             this.panel3.TabIndex = 4;
             // 
             // grafica
             // 
             this.grafica.BorderlineWidth = 5;
-            chartArea1.Name = "ChartArea1";
-            this.grafica.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.grafica.ChartAreas.Add(chartArea2);
             this.grafica.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.grafica.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.grafica.Legends.Add(legend2);
             this.grafica.Location = new System.Drawing.Point(0, 0);
             this.grafica.Name = "grafica";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.grafica.Series.Add(series1);
-            this.grafica.Size = new System.Drawing.Size(716, 458);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.grafica.Series.Add(series2);
+            this.grafica.Size = new System.Drawing.Size(716, 566);
             this.grafica.TabIndex = 0;
             this.grafica.Text = "chart1";
             // 
             // options
             // 
+            this.options.Controls.Add(this.chkStartEnd);
+            this.options.Controls.Add(this.bttPrint);
             this.options.Controls.Add(this.lblLevels);
             this.options.Controls.Add(this.bttRun);
             this.options.Controls.Add(this.bttNeWindow);
@@ -325,6 +317,31 @@
             this.splitter1.TabIndex = 47;
             this.splitter1.TabStop = false;
             // 
+            // bttPrint
+            // 
+            this.bttPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bttPrint.Location = new System.Drawing.Point(279, 51);
+            this.bttPrint.Name = "bttPrint";
+            this.bttPrint.Size = new System.Drawing.Size(68, 26);
+            this.bttPrint.TabIndex = 45;
+            this.bttPrint.Text = "Print";
+            this.bttPrint.UseVisualStyleBackColor = true;
+            this.bttPrint.Visible = false;
+            this.bttPrint.Click += new System.EventHandler(this.bttPrint_Click);
+            // 
+            // chkStartEnd
+            // 
+            this.chkStartEnd.AutoSize = true;
+            this.chkStartEnd.Checked = true;
+            this.chkStartEnd.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkStartEnd.Location = new System.Drawing.Point(141, 48);
+            this.chkStartEnd.Name = "chkStartEnd";
+            this.chkStartEnd.Size = new System.Drawing.Size(125, 17);
+            this.chkStartEnd.TabIndex = 46;
+            this.chkStartEnd.Text = "Display START-END";
+            this.chkStartEnd.UseVisualStyleBackColor = true;
+            this.chkStartEnd.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
+            // 
             // FormAsync
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,7 +353,6 @@
             this.Controls.Add(this.splitterLeft);
             this.Controls.Add(this.PLeftMain);
             this.Name = "FormAsync";
-            this.PTop.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).EndInit();
             this.options.ResumeLayout(false);
@@ -365,7 +381,6 @@
         private System.Windows.Forms.CheckBox chkSerie;
         private System.Windows.Forms.GroupBox options;
         private System.Windows.Forms.Button bttRun;
-        private System.Windows.Forms.TreeView tree;
         private System.Windows.Forms.Panel PLeft_TOP;
         private System.Windows.Forms.Button bttNeWindow;
         private System.Windows.Forms.Panel panelMethods;
@@ -374,5 +389,7 @@
         private System.Windows.Forms.Panel PLeftMain;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Label lblLevels;
+        private System.Windows.Forms.Button bttPrint;
+        private System.Windows.Forms.CheckBox chkStartEnd;
     }
 }

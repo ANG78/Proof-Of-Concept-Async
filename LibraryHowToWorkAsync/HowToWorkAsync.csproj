@@ -42,22 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassBaseM1A.cs" />
     <Compile Include="ImpDynamic\FactoryImplClass.cs" />
-    <Compile Include="ImpHardcoded2\FactoryImpHardcoded2.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1W_AM2_AM3W.cs" />
-    <Compile Include="ClassBaseImpl.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1_AM2_AM3.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1_AM2_AM3_WithAwaitConditionals.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1_M2_M3.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1W_AM2W_AM3W.cs" />
-    <Compile Include="ImpHardcoded2\Imp_AM1_AM2W_AM3W.cs" />
-    <Compile Include="ImpHardcoded2\Imp_M1_M2_M3.cs" />
     <Compile Include="ReportGenerator.cs" />
-    <Compile Include="ImplHardcoded\FactoryImpHarcoded.cs" />
-    <Compile Include="ImplHardcoded\Imp_AM1_AM2_AM3.cs" />
-    <Compile Include="ImplHardcoded\Imp_AM1_AM2_AM3_WithAwaitConditionals.cs" />
-    <Compile Include="ImplHardcoded\Imp_M1_M2_M3.cs" />
     <Compile Include="ImpDynamic\ClassTemplateImpl.cs" />
     <Compile Include="ImpDynamic\ImpGS.cs" />
     <Compile Include="ImpDynamic\ImpGSAsync.cs" />

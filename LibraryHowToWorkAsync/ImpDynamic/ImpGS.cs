@@ -2,14 +2,14 @@
 
 namespace HowToWorkAsync.ImpDynamic
 {
-    public abstract class ImpGS : ClassTemplateImpl, IGetString, IGetLevel
+    public abstract class ImpGS : ClassTemplateImpl, IGetString
     {
         protected abstract string Body(string nameReflection);
 
         public ImpGS(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
         {
-          
+
         }
 
         public string Main()
@@ -22,6 +22,12 @@ namespace HowToWorkAsync.ImpDynamic
             GenerateHeaderAndFoot(nameReflection);
             return result;
         }
+
+        public override string MyWorkDescription()
+        {
+            return "MyWork()";
+        }
+
 
     }
 
@@ -42,7 +48,17 @@ namespace HowToWorkAsync.ImpDynamic
 
             var resultNextStrings = nextResult;
 
-            return currentResult + resultNextStrings;
+            return currentResult + resultNextStrings.Result;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetStringAsync)Next).MainAsync()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
         }
     }
 
@@ -65,6 +81,16 @@ namespace HowToWorkAsync.ImpDynamic
 
             return currentResult + resultNextStrings;
         }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetStringAsync)Next).MainAsync().GetAwaiter()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return ".GetResult()";
+        }
     }
 
     public class MainNextSync_WA : ImpGS
@@ -76,14 +102,24 @@ namespace HowToWorkAsync.ImpDynamic
 
         protected override string Body(string nameReflection)
         {
-            var nextResult = ((IGetString)Next);
+            var nextResult = (IGetString)Next;
 
             var currentResult = MyWork(nameReflection);
             GenerateLostPoint(nameReflection);
 
-            var resultNextStrings = ((IGetString)nextResult).Main();
+            var resultNextStrings = nextResult.Main();
 
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "(IGetString)Next";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return ".Main()";
         }
     }
 
@@ -107,6 +143,16 @@ namespace HowToWorkAsync.ImpDynamic
             return currentResult + resultNextStrings;
 
         }
+
+        public override string CallNextDescription()
+        {
+            return "MainAsync().GetAwaiter().GetResult()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
     }
 
     public class MainNextSync_WF : ImpGS
@@ -127,6 +173,16 @@ namespace HowToWorkAsync.ImpDynamic
             var resultNextStrings = nextResult;
             return currentResult + resultNextStrings;
         }
+
+        public override string CallNextDescription()
+        {
+            return "Main()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
     }
 
     public class MainFinal : ImpGS
@@ -140,7 +196,18 @@ namespace HowToWorkAsync.ImpDynamic
         {
             return MyWork(nameReflection);
         }
+
+        public override string CallNextDescription()
+        {
+            return MyWorkDescription();
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
+
     }
-    
+
 
 }

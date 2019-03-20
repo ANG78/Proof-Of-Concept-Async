@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace HowToWorkAsync.ImpDynamic
 {
 
-    public abstract class ImpGSAsync : ClassTemplateImpl, IGetStringAsync, IGetLevel
+    public abstract class ImpGSAsync : ClassTemplateImpl, IGetStringAsync
     {
         protected abstract Task<string> Body(string literal);
 
@@ -15,13 +15,25 @@ namespace HowToWorkAsync.ImpDynamic
 
         public virtual async Task<string> MainAsync()
         {
-            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod(), true);
+            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
             GenerateHeaderAndFoot(nameReflection);
 
             var res = await Body(nameReflection);
 
             GenerateHeaderAndFoot(nameReflection);
             return res;
+        }
+
+        public override string MyWorkDescription()
+        {
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                return "MyWork()";
+            }
+            else
+            {
+                return " await Task.Run(() => {   return MyWork(); })";
+            }
         }
 
     }
@@ -40,12 +52,32 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
+            var resultNextStrings = auxREsult;
             GenerateLostPoint(nameReflection);
 
-            var resultNextStrings = auxREsult;
-
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetStringAsync)Next).MainAsync()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
         }
     }
 
@@ -61,12 +93,33 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
             GenerateLostPoint(nameReflection);
 
             var resultNextStrings = auxREsult.GetAwaiter().GetResult();
 
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetStringAsync)Next).MainAsync()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "GetAwaiter().GetResult()";
         }
     }
 
@@ -82,12 +135,33 @@ namespace HowToWorkAsync.ImpDynamic
 
             var auxREsult = ((IGetString)Next).Main();
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
             GenerateLostPoint(nameReflection);
 
             var resultNextStrings = auxREsult;
 
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetString)Next).Main()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
         }
     }
     #endregion
@@ -105,11 +179,32 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var auxREsult = await ((IGetStringAsync)Next).MainAsync();
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
             GenerateLostPoint(nameReflection);
 
             var resultNextStrings = auxREsult;
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "await ((IGetStringAsync)Next).MainAsync()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
         }
     }
 
@@ -123,18 +218,38 @@ namespace HowToWorkAsync.ImpDynamic
         }
         protected override async Task<string> Body(string nameReflection)
         {
-            var auxREsult = "";
-            await Task.Run(() =>
+            var auxREsult = await Task.Run(() =>
             {
-                auxREsult = (((IGetString)Next).Main());
+                return ((IGetString)Next).Main();
             });
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
             GenerateLostPoint(nameReflection);
 
             var resultNextStrings = auxREsult;
 
             return currentResult + resultNextStrings;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "await Task.Run(() =>  {  return ((IGetString)Next).Main();}); ";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
         }
     }
     #endregion
@@ -153,13 +268,36 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
+
             GenerateLostPoint(nameReflection);
 
             var resultNextStrings = await auxREsult;
 
             return currentResult + resultNextStrings;
         }
+
+        public override string CallNextDescription()
+        {
+            return "((IGetStringAsync)Next).MainAsync()";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "await";
+        }
+
     }
 
     public class MainAsyncNextSync_WA : ImpGSAsync
@@ -172,20 +310,42 @@ namespace HowToWorkAsync.ImpDynamic
 
         protected override async Task<string> Body(string nameReflection)
         {
-            var auxREsult = ((IGetString)Next);
+            var auxREsult = (IGetString)Next;
 
-            var currentResult = MyWork(nameReflection);
+            var currentResult = "";
+            if (Method.MyImpl == ETypeImpl.SYNC)
+            {
+                currentResult = MyWork(nameReflection);
+            }
+            else
+            {
+                currentResult = await Task.Run(() =>
+                {
+                    return MyWork(nameReflection);
+                });
+            }
             GenerateLostPoint(nameReflection);
 
-            var resultNextStrings = "";
-            await Task.Run(() =>
-            {
-                resultNextStrings = (auxREsult.Main());
-            });
+            var resultNextStrings = await Task.Run(() =>
+           {
+               return auxREsult.Main();
+           });
 
             GenerateHeaderAndFoot(nameReflection);
             return currentResult + resultNextStrings;
         }
+
+        public override string CallNextDescription()
+        {
+            return "(IGetString)Next";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "await Task.Run(() => {   return auxREsult.Main(); }) ";
+        }
+
+      
     }
     #endregion
 
@@ -201,12 +361,27 @@ namespace HowToWorkAsync.ImpDynamic
         }
         protected override async Task<string> Body(string nameReflection)
         {
-            string currentResult = await Task<string>.Run(() =>
+            string currentResult = await Task.Run(() =>
             {
                 return MyWork(nameReflection);
             });
 
             return currentResult;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "await Task.Run(() => {return " + MyWorkDescription()  + ";  }); ";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
+
+        public override string MyWorkDescription()
+        {
+            return "MyWork()";
         }
     }
 
@@ -219,12 +394,27 @@ namespace HowToWorkAsync.ImpDynamic
         }
         protected override async Task<string> Body(string nameReflection)
         {
-            string currentResult = Task<string>.Run(() =>
+            string currentResult = Task.Run(() =>
             {
                 return MyWork(nameReflection);
             }).GetAwaiter().GetResult();
 
             return currentResult;
+        }
+
+        public override string CallNextDescription()
+        {
+            return "Task.Run(() =>  {  return " +MyWorkDescription() + " ; }).GetAwaiter().GetResult(); ";
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
+
+        public override string MyWorkDescription()
+        {
+            return "MyWork()";
         }
     }
 
@@ -238,6 +428,21 @@ namespace HowToWorkAsync.ImpDynamic
         protected override async Task<string> Body(string nameReflection)
         {
             return MyWork(nameReflection);
+        }
+
+        public override string CallNextDescription()
+        {
+            return MyWorkDescription(); 
+        }
+
+        public override string HowToGetResultNextDescription()
+        {
+            return "";
+        }
+
+        public override string MyWorkDescription()
+        {
+            return "MyWork()";
         }
     }
     #endregion

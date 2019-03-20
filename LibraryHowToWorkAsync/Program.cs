@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace HowToWorkAsync
 {
 
-    public enum ETipoImplementacion
+    public enum ETypeImplementation
     {
         Imp_AM1_M2_M3,
         Imp_AM1_AM2_AM3_WA,
@@ -19,58 +19,38 @@ namespace HowToWorkAsync
 
     }
 
-    public class ProgramLanzador
+    public class Launcher
     {
         readonly IGenerateSerie _generaSerie;
         readonly IGetBase _implementacion;
 
-        public ProgramLanzador(IGenerateSerie generaSerie, IGetBase implementacion)
+        public Launcher(IGenerateSerie generaSerie, IGetBase implementacion)
         {
             _generaSerie = generaSerie;
             _implementacion = implementacion;
         }
 
 
-        public Report Run2()
-        {
-            DateTime inicia = DateTime.Now;
-            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
-
-            string cadenaGenerada = "";
-            if (_implementacion is IGetString)
-            {
-                cadenaGenerada = ((IGetString)_implementacion).Main();
-            }
-            else
-            {
-                cadenaGenerada = ((IGetStringAsync)_implementacion).MainAsync().GetAwaiter().GetResult();             
-            }
-
-            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
-            var res = _generaSerie.GenateDataReport();
-            res.Results = cadenaGenerada;
-            return res;
-
-        }
+       
 
         public async Task<Report> Run()
         {
             DateTime inicia = DateTime.Now;
-            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
+            _generaSerie.FillingOutTheReport("000" + "-RUN-", -1, false);
 
-            string cadenaGenerada = "";
+            string result = "";
             if (_implementacion is IGetString)
             {
-                cadenaGenerada = ((IGetString)_implementacion).Main();
+                result = ((IGetString)_implementacion).Main();
             }
             else
             {
-                cadenaGenerada = await ((IGetStringAsync)_implementacion).MainAsync();
+                result = await ((IGetStringAsync)_implementacion).MainAsync();
             }
 
-            _generaSerie.WriteLineReport("000" + "-RUN-", -1, false);
-            var res = _generaSerie.GenateDataReport();
-            res.Results = cadenaGenerada;
+            _generaSerie.FillingOutTheReport("000" + "-RUN-", -1, false);
+            var res = _generaSerie.GenateReport();
+            res.Results = result;
             return res;
 
         }
