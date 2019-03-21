@@ -81,14 +81,15 @@
             this.groupTodo.TabIndex = 13;
             this.groupTodo.TabStop = false;
             // 
-            // cmdMyImpl
+            // cmbMyImpl
             // 
             this.cmbMyImpl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMyImpl.FormattingEnabled = true;
             this.cmbMyImpl.Location = new System.Drawing.Point(143, 10);
-            this.cmbMyImpl.Name = "cmdMyImpl";
+            this.cmbMyImpl.Name = "cmbMyImpl";
             this.cmbMyImpl.Size = new System.Drawing.Size(62, 21);
             this.cmbMyImpl.TabIndex = 15;
+            this.cmbMyImpl.SelectedIndexChanged += new System.EventHandler(this.cmbMyImpl_SelectedIndexChanged);
             // 
             // cmb
             // 

@@ -33,7 +33,7 @@
 
             if (method.Next == null)
             {
-                return new MainFinal(reporter, processing, method, lastClass);
+                return new MainFinal(reporter, processing, method);
             }
             else
             {
@@ -85,15 +85,14 @@
 
             if (method.Next == null)
             {
-                switch (method.CallNext)
+                switch (method.MyImpl)
                 {
-                    case ECallNext.WAIT_FIRST:
-                    case ECallNext.WAIT_AFTER:
-                        return new MainAsyncFinal(reporter, procesamiento, method, lastClass); ;
-                    case ECallNext.AWAITER_AFTER:
-                        return new MainAsyncFinal_Awaiter(reporter, procesamiento, method, lastClass); ;
-                    case ECallNext.NOT_WAIT:
-                        return new MainAsyncFinal_NW(reporter, procesamiento, method, lastClass);
+                    case EMyTypeImpl.ASYNC:
+                        return new MainAsyncFinal(reporter, procesamiento, method); 
+                    case EMyTypeImpl.AWAITER:
+                        return new MainAsyncFinal_Awaiter(reporter, procesamiento, method);
+                    case EMyTypeImpl.SYNC:
+                        return new MainAsyncFinal_NW(reporter, procesamiento, method);
                 }
             }
 

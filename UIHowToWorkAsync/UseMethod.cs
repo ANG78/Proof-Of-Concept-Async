@@ -14,7 +14,7 @@ namespace UIHowToWorkAsync
         {
             InitializeComponent();
 
-            foreach (var aux in Enum.GetValues(typeof(ETypeImpl)))
+            foreach (var aux in Enum.GetValues(typeof(EMyTypeImpl)))
             {
                 cmbMyImpl.Items.Add(aux);
             }
@@ -35,7 +35,8 @@ namespace UIHowToWorkAsync
 
             EventChangeTheLastMethod += EventNextNullHandler;
 
-            MyImpl = ETypeImpl.SYNC;
+            MyImpl = EMyTypeImpl.SYNC;
+
         }
 
         private void trackMetodo1_Scroll(object sender, EventArgs e)
@@ -165,8 +166,18 @@ namespace UIHowToWorkAsync
                 }
                 else
                 {
-                    EventChangeTheLastMethod += EventNextNullHandler;
+                    HelperUI.ModifyMethod(this, () =>
+                        {
+                            EventChangeTheLastMethod += EventNextNullHandler;
+                        });
+
                 }
+
+                HelperUI.ModifyMethod(cmbNextImpl, () =>
+                {
+                    cmbNextImpl.Visible = (next != null);
+                    cmbNextAlg.Visible = (next != null);
+                });
             }
         }
 
@@ -189,12 +200,12 @@ namespace UIHowToWorkAsync
         }
 
 
-        public ETypeImpl MyImpl
+        public EMyTypeImpl MyImpl
         {
-            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbMyImpl.SelectedIndex; });
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (EMyTypeImpl)cmbMyImpl.SelectedIndex; });
             set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbMyImpl.SelectedIndex = (int)value; });
         }
-        
+
         public ETypeImpl TypeNextImpl
         {
             get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbNextImpl.SelectedIndex; });
@@ -206,7 +217,7 @@ namespace UIHowToWorkAsync
         public string IdMethod => HelperUI.GetMethod(groupBoxMethod, () => { return (string)groupBoxMethod.Text; });
 
         public IGetBase Implementation { get; set; }
-        
+
 
         private void SetLabelUnit()
         {
@@ -248,6 +259,11 @@ namespace UIHowToWorkAsync
         }
 
         private void cmbNextAlg_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbMyImpl_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

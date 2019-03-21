@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HowToWorkAsync.ImpDynamic
@@ -16,31 +17,36 @@ namespace HowToWorkAsync.ImpDynamic
         public virtual async Task<string> MainAsync()
         {
             var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
-            GenerateHeaderAndFoot(nameReflection);
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var res = await Body(nameReflection);
 
-            GenerateHeaderAndFoot(nameReflection);
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return res;
         }
 
         public override string MyWorkDescription()
         {
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
                 return "MyWork()";
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                return "Task.Run(() =>{return MyWork(nameReflection);}).GetAwaiter().GetResult(); ";
             }
             else
             {
                 return " await Task.Run(() => {   return MyWork(); })";
             }
+
         }
 
     }
 
 
     #region NW
-    public class MainAsyncNextAsync_NW : ImpGSAsync
+    public class MainAsyncNextAsync_NW : ImpGSAsync, IGetStringIn2Phases
     {
         public MainAsyncNextAsync_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
@@ -53,19 +59,26 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
             var resultNextStrings = auxREsult;
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             return currentResult + resultNextStrings;
         }
@@ -81,7 +94,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainAsyncNextAsync_AWAITER : ImpGSAsync
+    public class MainAsyncNextAsync_AWAITER : ImpGSAsync, IGetStringIn2Phases
     {
         public MainAsyncNextAsync_AWAITER(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
@@ -94,18 +107,25 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = auxREsult.GetAwaiter().GetResult();
 
@@ -123,7 +143,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainAsyncNextSync_NW : ImpGSAsync
+    public class MainAsyncNextSync_NW : ImpGSAsync, IGetStringIn2Phases
     {
         public MainAsyncNextSync_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
@@ -136,18 +156,25 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = ((IGetString)Next).Main();
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = auxREsult;
 
@@ -167,7 +194,7 @@ namespace HowToWorkAsync.ImpDynamic
     #endregion
 
     #region WF
-    public class MainAsyncNextAsync_WF : ImpGSAsync
+    public class MainAsyncNextAsync_WF : ImpGSAsync, IGetStringIn2Phases
     {
         public MainAsyncNextAsync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
         : base(gen, pProcesamiento, pMethod, pNext)
@@ -180,18 +207,25 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = await ((IGetStringAsync)Next).MainAsync();
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = auxREsult;
             return currentResult + resultNextStrings;
@@ -208,7 +242,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainAsyncNextSync_WF : ImpGSAsync
+    public class MainAsyncNextSync_WF : ImpGSAsync, IGetStringIn2Phases
     {
 
         public MainAsyncNextSync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
@@ -224,18 +258,25 @@ namespace HowToWorkAsync.ImpDynamic
             });
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = auxREsult;
 
@@ -255,7 +296,7 @@ namespace HowToWorkAsync.ImpDynamic
     #endregion
 
     #region WA
-    public class MainAsyncNextAsync_WA : ImpGSAsync
+    public class MainAsyncNextAsync_WA : ImpGSAsync, IGetStringIn2Phases
     {
 
         public MainAsyncNextAsync_WA(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
@@ -269,19 +310,26 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = ((IGetStringAsync)Next).MainAsync();
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
 
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = await auxREsult;
 
@@ -300,7 +348,7 @@ namespace HowToWorkAsync.ImpDynamic
 
     }
 
-    public class MainAsyncNextSync_WA : ImpGSAsync
+    public class MainAsyncNextSync_WA : ImpGSAsync, IGetStringIn2Phases
     {
         public MainAsyncNextSync_WA(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
             : base(gen, pProcesamiento, pMethod, pNext)
@@ -313,25 +361,32 @@ namespace HowToWorkAsync.ImpDynamic
             var auxREsult = (IGetString)Next;
 
             var currentResult = "";
-            if (Method.MyImpl == ETypeImpl.SYNC)
+            if (Method.MyImpl == EMyTypeImpl.SYNC)
             {
-                currentResult = MyWork(nameReflection);
+                currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            else if (Method.MyImpl == EMyTypeImpl.AWAITER)
+            {
+                currentResult = Task.Run(() =>
+                {
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }).GetAwaiter().GetResult();
             }
             else
             {
                 currentResult = await Task.Run(() =>
                 {
-                    return MyWork(nameReflection);
+                    return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = await Task.Run(() =>
            {
                return auxREsult.Main();
            });
 
-            GenerateHeaderAndFoot(nameReflection);
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + resultNextStrings;
         }
 
@@ -345,7 +400,7 @@ namespace HowToWorkAsync.ImpDynamic
             return "await Task.Run(() => {   return auxREsult.Main(); }) ";
         }
 
-      
+
     }
     #endregion
 
@@ -354,8 +409,8 @@ namespace HowToWorkAsync.ImpDynamic
     public class MainAsyncFinal : ImpGSAsync
     {
 
-        public MainAsyncFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-            : base(gen, pProcesamiento, pMethod, pNext)
+        public MainAsyncFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
+            : base(gen, pProcesamiento, pMethod, null)
         {
 
         }
@@ -363,32 +418,22 @@ namespace HowToWorkAsync.ImpDynamic
         {
             string currentResult = await Task.Run(() =>
             {
-                return MyWork(nameReflection);
+                return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
             });
 
             return currentResult;
         }
 
-        public override string CallNextDescription()
-        {
-            return "await Task.Run(() => {return " + MyWorkDescription()  + ";  }); ";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-
         public override string MyWorkDescription()
         {
-            return "MyWork()";
+            return "await Task.Run(() => {return " + "MyWork()" + ";  }); ";
         }
     }
 
     public class MainAsyncFinal_Awaiter : ImpGSAsync
     {
-        public MainAsyncFinal_Awaiter(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-            : base(gen, pProcesamiento, pMethod, pNext)
+        public MainAsyncFinal_Awaiter(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
+            : base(gen, pProcesamiento, pMethod, null)
         {
 
         }
@@ -396,48 +441,29 @@ namespace HowToWorkAsync.ImpDynamic
         {
             string currentResult = Task.Run(() =>
             {
-                return MyWork(nameReflection);
+                return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
             }).GetAwaiter().GetResult();
 
             return currentResult;
         }
 
-        public override string CallNextDescription()
-        {
-            return "Task.Run(() =>  {  return " +MyWorkDescription() + " ; }).GetAwaiter().GetResult(); ";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-
         public override string MyWorkDescription()
         {
-            return "MyWork()";
+            return "Task.Run(() =>  {  return " + "MyWork()" + " ; }).GetAwaiter().GetResult(); ";
         }
+
     }
 
     public class MainAsyncFinal_NW : ImpGSAsync
     {
-        public MainAsyncFinal_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-            : base(gen, pProcesamiento, pMethod, pNext)
+        public MainAsyncFinal_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
+            : base(gen, pProcesamiento, pMethod, null)
         {
 
         }
         protected override async Task<string> Body(string nameReflection)
         {
-            return MyWork(nameReflection);
-        }
-
-        public override string CallNextDescription()
-        {
-            return MyWorkDescription(); 
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
+            return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
         }
 
         public override string MyWorkDescription()

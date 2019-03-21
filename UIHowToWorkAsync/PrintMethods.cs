@@ -47,22 +47,27 @@ namespace UIHowToWorkAsync
             colorNext = color;
             var current2 = current;
 
-            string nextImp = parameter.Implementation.CallNextDescription();
-            string getNextSting = parameter.Implementation.HowToGetResultNextDescription();
+            string nextImp, getNextSting, todo;
+            nextImp = getNextSting = "";
+
+            if (parameter.Implementation is IGetStringIn2Phases)
+            {
+                nextImp = ((IGetStringIn2Phases)parameter.Implementation).CallNextDescription();
+                getNextSting = ((IGetStringIn2Phases)parameter.Implementation).HowToGetResultNextDescription();
+            }
+            todo = parameter.Implementation.MyWorkDescription();
+
 
             if (parameter.Next != null)
             {
-
                 callNext = @"VAR X" + parameter.Level + " = " + nextImp;
                 Print(parameter.Next);
-                Write(current2, @"VAR Y" + parameter.Level + " = MyWork()", color);
+                Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
                 Write(current2, @"Return X" + parameter.Level + " + Y" + parameter.Level, color);
-
-
             }
             else
             {
-                Write(current2, @"Return " + nextImp, color);
+                Write(current2, @"Return " + todo, color);
             }
         }
 

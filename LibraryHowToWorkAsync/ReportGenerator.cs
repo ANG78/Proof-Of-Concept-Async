@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HowToWorkAsync
 {
@@ -13,7 +10,7 @@ namespace HowToWorkAsync
     {
         private int iteracion = 0;
         private readonly object toLock = new object();
-        
+
         public ReportGenerator()
         {
         }
@@ -21,7 +18,7 @@ namespace HowToWorkAsync
         public List<string> cadenaFinal = new List<string>();
         Dictionary<string, Serie> _series = new Dictionary<string, Serie>();
 
-        public string FillingOutTheReport(string metod, int i, bool esTiempo = false)
+        public string FillingOutTheReport(string metod, int i, int idThread, bool esTiempo = false)
         {
             string cadena;
             lock (toLock)
@@ -30,7 +27,7 @@ namespace HowToWorkAsync
                 cadena = "$" + metod + "[" + i + "]";
                 cadenaFinal.Add(cadena);
 
-                PopularSeries( metod, esTiempo);
+                PopulateSerie(metod, idThread, esTiempo);
 
             }
             Console.WriteLine(cadena);
@@ -40,9 +37,9 @@ namespace HowToWorkAsync
         /// <summary>
         /// 
         /// </summary>
-        private void  PopularSeries( string metod, bool esTiempo)
+        private void PopulateSerie(string metod, int idThread, bool esTiempo)
         {
-            string key = metod + "#"+ Thread.CurrentThread.ManagedThreadId;
+            string key = metod + "#" + idThread;
             if (!_series.ContainsKey(key))
             {
                 _series[key] = new Serie() { IdSerie = key, IdSerieY = _series.Keys.Count, IsTime = esTiempo };
@@ -50,8 +47,8 @@ namespace HowToWorkAsync
 
             PointSerie puntoSerie = new PointSerie()
             {
-                IdHilo = Thread.CurrentThread.ManagedThreadId,
-                IdSerie = key,     
+                IdHilo = idThread,
+                IdSerie = key,
                 X = iteracion,
                 Y = _series[key].IdSerieY,
                 When = DateTime.Now
@@ -64,7 +61,7 @@ namespace HowToWorkAsync
         public Report GenateReport()
         {
             Report informe = new Report();
-            
+
 
             informe.Series = _series.Values.ToList();
 
@@ -80,9 +77,9 @@ namespace HowToWorkAsync
                 int[] datosAux = new int[maxTiempo];
                 DateTime?[] tiemposAux = new DateTime?[maxTiempo];
 
-              //  SerieInforme actual = new SerieInforme();
-               // resultado.Add(actual);
-               // actual.IdSerie = key;
+                //  SerieInforme actual = new SerieInforme();
+                // resultado.Add(actual);
+                // actual.IdSerie = key;
 
                 var list = _series[key];
 
@@ -103,7 +100,7 @@ namespace HowToWorkAsync
                     tiemposNormalizados.Add(tiemposAux[z]);
                 }
                 */
-                
+
                 i++;
             }
 
@@ -156,7 +153,6 @@ namespace HowToWorkAsync
             System.IO.File.AppendAllLines("C:\\salida.csv", cadenaFinal);
             */
         }
-
 
     }
 

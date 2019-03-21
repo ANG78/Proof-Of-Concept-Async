@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading;
 
 namespace HowToWorkAsync.ImpDynamic
 {
@@ -15,11 +16,11 @@ namespace HowToWorkAsync.ImpDynamic
         public string Main()
         {
             var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
-            GenerateHeaderAndFoot(nameReflection);
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var result = Body(nameReflection);
 
-            GenerateHeaderAndFoot(nameReflection);
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return result;
         }
 
@@ -31,7 +32,7 @@ namespace HowToWorkAsync.ImpDynamic
 
     }
 
-    public class MainNextAsync_NW : ImpGS
+    public class MainNextAsync_NW : ImpGS, IGetStringIn2Phases
     {
         public MainNextAsync_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
            : base(gen, pProcesamiento, pMethod, pNext)
@@ -43,8 +44,8 @@ namespace HowToWorkAsync.ImpDynamic
 
             var nextResult = ((IGetStringAsync)Next).MainAsync();
 
-            var currentResult = MyWork(nameReflection);
-            GenerateLostPoint(nameReflection);
+            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = nextResult;
 
@@ -62,7 +63,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainNextAsync_AWAITER : ImpGS
+    public class MainNextAsync_AWAITER : ImpGS, IGetStringIn2Phases
     {
         public MainNextAsync_AWAITER(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
            : base(gen, pProcesamiento, pMethod, pNext)
@@ -74,8 +75,8 @@ namespace HowToWorkAsync.ImpDynamic
 
             var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
 
-            var currentResult = MyWork(nameReflection);
-            GenerateLostPoint(nameReflection);
+            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = nextResult.GetResult();
 
@@ -93,7 +94,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainNextSync_WA : ImpGS
+    public class MainNextSync_WA : ImpGS, IGetStringIn2Phases
     {
         public MainNextSync_WA(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
            : base(gen, pProcesamiento, pMethod, pNext)
@@ -104,8 +105,8 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var nextResult = (IGetString)Next;
 
-            var currentResult = MyWork(nameReflection);
-            GenerateLostPoint(nameReflection);
+            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = nextResult.Main();
 
@@ -124,7 +125,7 @@ namespace HowToWorkAsync.ImpDynamic
     }
 
 
-    public class MainNextAsync_WF : ImpGS
+    public class MainNextAsync_WF : ImpGS, IGetStringIn2Phases
     {
         public MainNextAsync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
            : base(gen, pProcesamiento, pMethod, pNext)
@@ -135,8 +136,8 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
 
-            var currentResult = MyWork(nameReflection);
-            GenerateLostPoint(nameReflection);
+            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = nextResult;
 
@@ -155,7 +156,7 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class MainNextSync_WF : ImpGS
+    public class MainNextSync_WF : ImpGS, IGetStringIn2Phases
     {
 
         public MainNextSync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
@@ -167,8 +168,8 @@ namespace HowToWorkAsync.ImpDynamic
         {
             var nextResult = ((IGetString)Next).Main();
 
-            var currentResult = MyWork(nameReflection);
-            GenerateLostPoint(nameReflection);
+            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             var resultNextStrings = nextResult;
             return currentResult + resultNextStrings;
@@ -187,14 +188,14 @@ namespace HowToWorkAsync.ImpDynamic
 
     public class MainFinal : ImpGS
     {
-        public MainFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
+        public MainFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
+           : base(gen, pProcesamiento, pMethod, null)
         {
         }
 
         protected override string Body(string nameReflection)
         {
-            return MyWork(nameReflection);
+            return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
         }
 
         public override string CallNextDescription()

@@ -61,25 +61,29 @@ namespace HowToWorkAsync
         IGetBase Implementation { get; set; }
         ECallNext CallNext { get; set; }
         ETypeImpl TypeNextImpl { get; set; }
-        ETypeImpl MyImpl { get; set; }
+        EMyTypeImpl MyImpl { get; set; }
     }
 
 
     public interface IGenerateSerie
     {
-        string FillingOutTheReport(string metod, int i, bool esTiempo = false);
+        string FillingOutTheReport(string metod, int iLevel, int idThread, bool esTiempo = false);
         Report GenateReport();
     }
 
     public interface IGetBase
     {
-        string MyWorkDescription();
-        string CallNextDescription();
-        string HowToGetResultNextDescription();
+        string MyWorkDescription();       
         uint Level { get; set; }
         string Ident();
     }
 
+    public interface IGetStringIn2Phases
+    {
+        string CallNextDescription();
+        string HowToGetResultNextDescription();
+    }
+    
 
     public interface IGetString : IGetBase
     {
@@ -93,7 +97,7 @@ namespace HowToWorkAsync
 
     public interface IStrategyTodo
     {
-        string Todo(string cadena);
+        string Todo(string cadena, int idThread);
         bool IsTime();
         int AmountOfStepsOrMls();
     }
@@ -125,6 +129,13 @@ namespace HowToWorkAsync
     {
         ASYNC,
         SYNC
+    }
+
+    public enum EMyTypeImpl
+    {
+        ASYNC,
+        SYNC,
+        AWAITER
     }
 
     public enum ECallNext

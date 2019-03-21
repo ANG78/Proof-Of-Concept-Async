@@ -39,12 +39,20 @@ namespace HowToWorkAsync
             return false;
         }
 
-        public string Todo(string idSerie)
+        public string Todo(string idSerie, int idthread)
         {
             string cadena1 = "";
             for (int i = 1; i <= _count; i++)
             {
-                cadena1 = generateSerie.FillingOutTheReport(idSerie, i);
+                if (idthread != Thread.CurrentThread.ManagedThreadId)
+                {
+                    cadena1 = generateSerie.FillingOutTheReport(idSerie, i, Thread.CurrentThread.ManagedThreadId);
+                }
+                else
+                {
+                    cadena1 = generateSerie.FillingOutTheReport(idSerie, i, idthread);
+                }
+                
                 Thread.Sleep(5);
             }
             return cadena1;
@@ -66,12 +74,12 @@ namespace HowToWorkAsync
             _count = count;
         }
 
-        public string Todo(string idSerie)
+        public string Todo(string idSerie, int idThread)
         {
-            _generaSerie.FillingOutTheReport(idSerie, _count, true);
-            Console.Write("Dormir el hilo por.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
+            _generaSerie.FillingOutTheReport(idSerie, _count, idThread, true);
+            Console.Write("sleeping thread.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
             Thread.Sleep(ETypeWork.SLEEPING.Factor() * _count);
-            return _generaSerie.FillingOutTheReport(idSerie, _count, true);
+            return _generaSerie.FillingOutTheReport(idSerie, _count, idThread, true);
         }
 
         public bool IsTime()

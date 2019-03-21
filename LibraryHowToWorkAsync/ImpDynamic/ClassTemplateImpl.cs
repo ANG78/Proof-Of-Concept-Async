@@ -21,9 +21,9 @@ namespace HowToWorkAsync.ImpDynamic
             return "0" + Level + ((this is IGetString) ? "-Main" : "-MainAsync");
         }
 
-        protected string TaskBase(string cadena, uint numProc)
+        protected string TaskBase(string message, int idTread, uint numProc)
         {
-            return WhatTodo.Todo(cadena);
+            return WhatTodo.Todo(message, idTread);
         }
 
         protected int TaskBaseNumeroIteracionesOTiempo(string cadena, uint numProc)
@@ -50,14 +50,14 @@ namespace HowToWorkAsync.ImpDynamic
             return codFuncion + nameReflection;
         }
 
-        public void GenerateHeaderAndFoot(string literal)
+        public void GenerateHeaderAndFoot(string literal, int idThread)
         {
-            generator.FillingOutTheReport("00" + Level + "-" + literal, (int)Level);
+            generator.FillingOutTheReport("00" + Level + "-" + literal, (int)Level, idThread);
         }
 
-        public void GenerateLostPoint(string literal)
+        public void GenerateLostPoint(string literal, int idThread)
         {
-            generator.FillingOutTheReport("0" + Level + "-" + literal + "LOST", (int)Level);
+            generator.FillingOutTheReport("0" + Level + "-" + literal + "LOST", (int)Level, idThread);
         }
 
     }
@@ -76,14 +76,21 @@ namespace HowToWorkAsync.ImpDynamic
             pMethod.Implementation = (IGetBase)this;
         }
 
-        public string MyWork(string literal)
+        public string MyWork(string literal, int idThread)
         {
-            return TaskBase("0" + Level + "-" + literal, Level);            
+            return TaskBase("0" + Level + "-" + literal, idThread, Level);
         }
 
         public abstract string MyWorkDescription();
-        public abstract string CallNextDescription();
-        public abstract string HowToGetResultNextDescription();
+        public virtual string CallNextDescription()
+        {
+            return "";
+        }
+
+        public virtual string HowToGetResultNextDescription()
+        {
+            return "";
+        }
     }
 
 

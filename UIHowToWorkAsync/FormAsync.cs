@@ -2,6 +2,7 @@
 using HowToWorkAsync.Process;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using UIConclusionesAsync;
@@ -138,7 +139,7 @@ namespace UIHowToWorkAsync
                 }
                 catch (Exception ex1)
                 {
-                    reporter.FillingOutTheReport("Ex1", -1);
+                    reporter.FillingOutTheReport("Ex1", -1, Thread.CurrentThread.ManagedThreadId);
                     MessageBox.Show(ex1.Message);
                 }
                 // }
@@ -147,7 +148,7 @@ namespace UIHowToWorkAsync
             }
             catch (Exception ex)
             {
-                reporter.FillingOutTheReport("Ex2", -1);
+                reporter.FillingOutTheReport("Ex2", -1, Thread.CurrentThread.ManagedThreadId);
                 MessageBox.Show(ex.Message);
             }
             finally
