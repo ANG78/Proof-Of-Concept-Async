@@ -46,11 +46,11 @@ namespace HowToWorkAsync
             {
                 if (idthread != Thread.CurrentThread.ManagedThreadId)
                 {
-                    cadena1 = generateSerie.FillingOutTheReport(idSerie, i, Thread.CurrentThread.ManagedThreadId);
+                    cadena1 = generateSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, i, Thread.CurrentThread.ManagedThreadId);
                 }
                 else
                 {
-                    cadena1 = generateSerie.FillingOutTheReport(idSerie, i, idthread);
+                    cadena1 = generateSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, i, idthread);
                 }
                 
                 Thread.Sleep(5);
@@ -76,10 +76,10 @@ namespace HowToWorkAsync
 
         public string Todo(string idSerie, int idThread)
         {
-            _generaSerie.FillingOutTheReport(idSerie, _count, idThread, true);
+            _generaSerie.FillingOutTheReport(ETypePoint.TODO, idSerie, _count, idThread, true);
             Console.Write("sleeping thread.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
             Thread.Sleep(ETypeWork.SLEEPING.Factor() * _count);
-            return _generaSerie.FillingOutTheReport(idSerie, _count, idThread, true);
+            return _generaSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, _count, idThread, true);
         }
 
         public bool IsTime()

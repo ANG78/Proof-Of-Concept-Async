@@ -27,6 +27,7 @@ namespace HowToWorkAsync
         public int Y { get; set; }
         public DateTime When { get; set; }
         public int IdHilo { get; set; }
+        public ETypePoint Type { get; set; }
     }
 
     public class Serie
@@ -65,9 +66,17 @@ namespace HowToWorkAsync
     }
 
 
+    public enum ETypePoint
+    {
+        TODO,
+        LOST,
+        STAR_END
+    }
+   
+
     public interface IGenerateSerie
     {
-        string FillingOutTheReport(string metod, int iLevel, int idThread, bool esTiempo = false);
+        string FillingOutTheReport(ETypePoint type, string metod, int iLevel, int idThread, bool esTiempo = false);
         Report GenateReport();
     }
 

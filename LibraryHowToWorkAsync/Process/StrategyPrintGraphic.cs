@@ -85,12 +85,12 @@ namespace HowToWorkAsync.Process
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
-                if (chkStartAndEnd == false && serieExtraida.IdSerie.StartsWith("000") )
+                if (chkStartAndEnd == false && serieExtraida.Points.Any( x => x.Type == ETypePoint.STAR_END))
                 {
                     continue;
                 }
 
-
+                 
                 Series serie = chart.Series.Add(serieExtraida.IdSerie);
 
                 var points = serieExtraida.Points;

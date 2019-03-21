@@ -18,7 +18,7 @@ namespace HowToWorkAsync
         public List<string> cadenaFinal = new List<string>();
         Dictionary<string, Serie> _series = new Dictionary<string, Serie>();
 
-        public string FillingOutTheReport(string metod, int i, int idThread, bool esTiempo = false)
+        public string FillingOutTheReport(ETypePoint Type, string metod, int i, int idThread, bool esTiempo = false)
         {
             string cadena;
             lock (toLock)
@@ -27,7 +27,7 @@ namespace HowToWorkAsync
                 cadena = "$" + metod + "[" + i + "]";
                 cadenaFinal.Add(cadena);
 
-                PopulateSerie(metod, idThread, esTiempo);
+                PopulateSerie(Type, metod, idThread, esTiempo);
 
             }
             Console.WriteLine(cadena);
@@ -37,7 +37,7 @@ namespace HowToWorkAsync
         /// <summary>
         /// 
         /// </summary>
-        private void PopulateSerie(string metod, int idThread, bool esTiempo)
+        private void PopulateSerie(ETypePoint ETypePoint, string metod, int idThread, bool esTiempo)
         {
             string key = metod + "#" + idThread;
             if (!_series.ContainsKey(key))
@@ -51,7 +51,8 @@ namespace HowToWorkAsync
                 IdSerie = key,
                 X = iteracion,
                 Y = _series[key].IdSerieY,
-                When = DateTime.Now
+                When = DateTime.Now,
+                Type = ETypePoint
             };
 
             _series[key].Points.Add(puntoSerie);

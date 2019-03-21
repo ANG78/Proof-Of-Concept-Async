@@ -139,7 +139,7 @@ namespace UIHowToWorkAsync
                 }
                 catch (Exception ex1)
                 {
-                    reporter.FillingOutTheReport("Ex1", -1, Thread.CurrentThread.ManagedThreadId);
+                    reporter.FillingOutTheReport( ETypePoint.STAR_END,"Ex1", -1, Thread.CurrentThread.ManagedThreadId);
                     MessageBox.Show(ex1.Message);
                 }
                 // }
@@ -148,7 +148,7 @@ namespace UIHowToWorkAsync
             }
             catch (Exception ex)
             {
-                reporter.FillingOutTheReport("Ex2", -1, Thread.CurrentThread.ManagedThreadId);
+                reporter.FillingOutTheReport(ETypePoint.STAR_END,"Ex2", -1, Thread.CurrentThread.ManagedThreadId);
                 MessageBox.Show(ex.Message);
             }
             finally
