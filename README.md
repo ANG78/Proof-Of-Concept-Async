@@ -6,8 +6,7 @@ The idea is to define several levels of call stack among Async/No Async methods 
 
 1) how many threads working regarding the number of calls.
 2) order of execution of methods involved
-3) time elapsed as per cases to be defined by the user
-4) what if the method async invocated fihish before or later
-5) ...
+3) time elapsed by each method
+4) ...
 
 ![alt text](capture1.png)
