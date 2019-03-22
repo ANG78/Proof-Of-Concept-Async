@@ -1,5 +1,3 @@
-# ProofOfConcept reagarding to Async/Await
-
 # Proof Of Concept: Async/Await
 
 Basado en el artículo relativo a Asyn/Await de microsoft (https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/ ) uno encuentra esta imagen en el mismo, en el cual ilustra de alguna manera cómo funciona.
