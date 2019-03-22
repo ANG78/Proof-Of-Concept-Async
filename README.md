@@ -1,4 +1,4 @@
-# ProofOfConcept reagarding to Async/Await
+# Proof Of Concept: Async/Await
 
 I intent to represent and understand using charts how to work the  keys Async/await in .NET.
 
