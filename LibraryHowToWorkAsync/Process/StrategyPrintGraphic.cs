@@ -14,6 +14,7 @@ namespace HowToWorkAsync.Process
         readonly bool chkHilos;
         readonly bool chkTiempoTicks;
         readonly bool chkStartAndEnd;
+        readonly bool chkLost;
         readonly SeriesChartType cmbTypeOfGraphic;
 
 
@@ -24,6 +25,7 @@ namespace HowToWorkAsync.Process
                               bool pchkHilos,
                               bool pchkTiempoTicks,
                               bool pchkStartAndEnd,
+                              bool pchkLost,
                               SeriesChartType pcmbTipoGrafica
                             )
         {
@@ -35,6 +37,7 @@ namespace HowToWorkAsync.Process
             cmbTypeOfGraphic = pcmbTipoGrafica;
             chkStartAndEnd = pchkStartAndEnd;
             chkSerieWithoutIds = pchkSerieSinIds;
+            chkLost = pchkLost;
         }
 
         public void Execute(Report informe)
@@ -85,22 +88,33 @@ namespace HowToWorkAsync.Process
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
-                if (chkStartAndEnd == false && serieExtraida.Points.Any( x => x.Type == ETypePoint.STAR_END))
+                if (!chkStartAndEnd  && serieExtraida.Points.Any(x => x.Type == ETypePoint.STAR_END))
                 {
                     continue;
                 }
 
-                 
+                if (!chkLost  && serieExtraida.Points.Any(x => x.Type == ETypePoint.LOST))
+                {
+                    continue;
+                }
+
+
                 Series serie = chart.Series.Add(serieExtraida.IdSerie);
 
                 var points = serieExtraida.Points;
                 if (points == null || points.Count == 0)
                     throw new Exception("Fallo de impl, la serie no puede estar vacia");
 
-                if (points.Count == 1)
+                if (!serieExtraida.Points.Any(x => x.Type == ETypePoint.LOST))
+                {
+                    tiemposExtraidos += " [" + serieExtraida.IdSerie + ":" + serieExtraida.ElapsedTime() + " mls]   ";
+                }
+                else if (this.chkLost)
+                {
                     points.Add(new PointSerie() { Y = -1, X = points[0].X, IdHilo = points[0].IdHilo, When = points[0].When });
+                }
 
-                tiemposExtraidos += " [" + serieExtraida.IdSerie + ":" + serieExtraida.ElapsedTime() + " mls]   ";
+
 
                 serie.ChartType = cmbTypeOfGraphic;
                 serie.BorderDashStyle = ChartDashStyle.Solid;

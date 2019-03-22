@@ -77,9 +77,13 @@ namespace HowToWorkAsync.ImpDynamic
                     return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            var resultNextStrings = auxREsult;
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
+            var resultNextStrings = auxREsult;
+            if ( !resultNextStrings.IsCompleted)
+            {
+                GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            
             return currentResult + resultNextStrings;
         }
 
@@ -104,7 +108,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         protected override async Task<string> Body(string nameReflection)
         {
-            var auxREsult = ((IGetStringAsync)Next).MainAsync();
+            var auxREsult = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
 
             var currentResult = "";
             if (Method.MyImpl == EMyTypeImpl.SYNC)
@@ -127,19 +131,25 @@ namespace HowToWorkAsync.ImpDynamic
             }
             GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
-            var resultNextStrings = auxREsult.GetAwaiter().GetResult();
+            if (!auxREsult.IsCompleted)
+            {
+                GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+
+
+            var resultNextStrings = auxREsult.GetResult();
 
             return currentResult + resultNextStrings;
         }
 
         public override string CallNextDescription()
         {
-            return "((IGetStringAsync)Next).MainAsync()";
+            return "((IGetStringAsync)Next).MainAsync().GetAwaiter()";
         }
 
         public override string HowToGetResultNextDescription()
         {
-            return "GetAwaiter().GetResult()";
+            return ".GetResult()";
         }
     }
 
@@ -174,8 +184,7 @@ namespace HowToWorkAsync.ImpDynamic
                     return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
+            
             var resultNextStrings = auxREsult;
 
             return currentResult + resultNextStrings;
@@ -225,8 +234,7 @@ namespace HowToWorkAsync.ImpDynamic
                     return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
+           
             var resultNextStrings = auxREsult;
             return currentResult + resultNextStrings;
         }
@@ -328,9 +336,11 @@ namespace HowToWorkAsync.ImpDynamic
                     return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
                 });
             }
-
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
+            if (!auxREsult.IsCompleted)
+            {
+                GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            }
+            
             var resultNextStrings = await auxREsult;
 
             return currentResult + resultNextStrings;

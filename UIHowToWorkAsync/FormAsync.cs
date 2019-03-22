@@ -180,6 +180,7 @@ namespace UIHowToWorkAsync
                                       chkHilos.Checked,
                                       chkTiempoTicks.Checked,
                                       this.chkStartEnd.Checked,
+                                      this.chkLostPoints.Checked,
                                       (SeriesChartType)cmbTipoGrafica.SelectedItem);
         }
 
@@ -198,7 +199,7 @@ namespace UIHowToWorkAsync
                 }
                 else
                 {
-                    proc.WriteToFile(informe, "c:\\volcar" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_") + ".csv");
+                    proc.WriteToFile(informe, "c:\\file" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_") + ".csv");
                 }
 
             }
@@ -215,8 +216,8 @@ namespace UIHowToWorkAsync
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var Formulario = new FormAsync();
-            Formulario.Show();
+            var form = new FormAsync();
+            form.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -247,6 +248,11 @@ namespace UIHowToWorkAsync
                 form.Print(Method);
                 bttPrint.Visible = false;
             }
+        }
+
+        private void options_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

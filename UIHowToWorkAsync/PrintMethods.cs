@@ -25,6 +25,7 @@ namespace UIHowToWorkAsync
         private TreeNode Write(TreeNode node, string message, Color color)
         {
             var nodeResult = node.Nodes.Add(message);
+            nodeResult.ImageIndex = 0;
             nodeResult.ForeColor = (color);
             nodeResult.ExpandAll();
             return nodeResult;

@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.PTop = new System.Windows.Forms.Panel();
             this.cmbTipoGrafica = new System.Windows.Forms.ComboBox();
@@ -43,6 +43,8 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.grafica = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.options = new System.Windows.Forms.GroupBox();
+            this.chkStartEnd = new System.Windows.Forms.CheckBox();
+            this.bttPrint = new System.Windows.Forms.Button();
             this.lblLevels = new System.Windows.Forms.Label();
             this.bttRun = new System.Windows.Forms.Button();
             this.bttNeWindow = new System.Windows.Forms.Button();
@@ -52,8 +54,7 @@
             this.panelMethodsFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.PLeftMain = new System.Windows.Forms.Panel();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.bttPrint = new System.Windows.Forms.Button();
-            this.chkStartEnd = new System.Windows.Forms.CheckBox();
+            this.chkLostPoints = new System.Windows.Forms.CheckBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).BeginInit();
             this.options.SuspendLayout();
@@ -67,7 +68,7 @@
             this.splitterLeft.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.splitterLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitterLeft.Cursor = System.Windows.Forms.Cursors.VSplit;
-            this.splitterLeft.Location = new System.Drawing.Point(356, 0);
+            this.splitterLeft.Location = new System.Drawing.Point(380, 0);
             this.splitterLeft.Name = "splitterLeft";
             this.splitterLeft.Size = new System.Drawing.Size(5, 581);
             this.splitterLeft.TabIndex = 1;
@@ -76,11 +77,11 @@
             // PTop
             // 
             this.PTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PTop.Location = new System.Drawing.Point(361, 0);
+            this.PTop.Location = new System.Drawing.Point(385, 0);
             this.PTop.Margin = new System.Windows.Forms.Padding(0);
             this.PTop.MinimumSize = new System.Drawing.Size(0, 5);
             this.PTop.Name = "PTop";
-            this.PTop.Size = new System.Drawing.Size(716, 10);
+            this.PTop.Size = new System.Drawing.Size(692, 10);
             this.PTop.TabIndex = 2;
             // 
             // cmbTipoGrafica
@@ -111,9 +112,9 @@
             this.chkOrdernar.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOrdernar.Location = new System.Drawing.Point(6, 48);
             this.chkOrdernar.Name = "chkOrdernar";
-            this.chkOrdernar.Size = new System.Drawing.Size(129, 17);
+            this.chkOrdernar.Size = new System.Drawing.Size(97, 17);
             this.chkOrdernar.TabIndex = 16;
-            this.chkOrdernar.Text = "Order Series by Name";
+            this.chkOrdernar.Text = "Order by Name";
             this.chkOrdernar.UseVisualStyleBackColor = true;
             this.chkOrdernar.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
             // 
@@ -122,7 +123,7 @@
             this.chConId.AutoSize = true;
             this.chConId.Checked = true;
             this.chConId.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chConId.Location = new System.Drawing.Point(122, 70);
+            this.chConId.Location = new System.Drawing.Point(193, 68);
             this.chConId.Name = "chConId";
             this.chConId.Size = new System.Drawing.Size(109, 17);
             this.chConId.TabIndex = 26;
@@ -134,7 +135,7 @@
             // chkHilos
             // 
             this.chkHilos.AutoSize = true;
-            this.chkHilos.Location = new System.Drawing.Point(121, 89);
+            this.chkHilos.Location = new System.Drawing.Point(107, 89);
             this.chkHilos.Name = "chkHilos";
             this.chkHilos.Size = new System.Drawing.Size(109, 17);
             this.chkHilos.TabIndex = 17;
@@ -158,9 +159,9 @@
             this.splitterTop.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.splitterTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitterTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitterTop.Location = new System.Drawing.Point(361, 10);
+            this.splitterTop.Location = new System.Drawing.Point(385, 10);
             this.splitterTop.Name = "splitterTop";
-            this.splitterTop.Size = new System.Drawing.Size(716, 5);
+            this.splitterTop.Size = new System.Drawing.Size(692, 5);
             this.splitterTop.TabIndex = 3;
             this.splitterTop.TabStop = false;
             // 
@@ -169,31 +170,32 @@
             this.panel3.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panel3.Controls.Add(this.grafica);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(361, 15);
+            this.panel3.Location = new System.Drawing.Point(385, 15);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(716, 566);
+            this.panel3.Size = new System.Drawing.Size(692, 566);
             this.panel3.TabIndex = 4;
             // 
             // grafica
             // 
             this.grafica.BorderlineWidth = 5;
-            chartArea2.Name = "ChartArea1";
-            this.grafica.ChartAreas.Add(chartArea2);
+            chartArea8.Name = "ChartArea1";
+            this.grafica.ChartAreas.Add(chartArea8);
             this.grafica.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.grafica.Legends.Add(legend2);
+            legend8.Name = "Legend1";
+            this.grafica.Legends.Add(legend8);
             this.grafica.Location = new System.Drawing.Point(0, 0);
             this.grafica.Name = "grafica";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.grafica.Series.Add(series2);
-            this.grafica.Size = new System.Drawing.Size(716, 566);
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.grafica.Series.Add(series8);
+            this.grafica.Size = new System.Drawing.Size(692, 566);
             this.grafica.TabIndex = 0;
             this.grafica.Text = "chart1";
             // 
             // options
             // 
+            this.options.Controls.Add(this.chkLostPoints);
             this.options.Controls.Add(this.chkStartEnd);
             this.options.Controls.Add(this.bttPrint);
             this.options.Controls.Add(this.lblLevels);
@@ -210,14 +212,41 @@
             this.options.Location = new System.Drawing.Point(0, 0);
             this.options.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.options.Name = "options";
-            this.options.Size = new System.Drawing.Size(356, 118);
+            this.options.Size = new System.Drawing.Size(380, 121);
             this.options.TabIndex = 44;
             this.options.TabStop = false;
+            this.options.Enter += new System.EventHandler(this.options_Enter);
+            // 
+            // chkStartEnd
+            // 
+            this.chkStartEnd.AutoSize = true;
+            this.chkStartEnd.Checked = true;
+            this.chkStartEnd.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkStartEnd.Location = new System.Drawing.Point(106, 49);
+            this.chkStartEnd.Name = "chkStartEnd";
+            this.chkStartEnd.Size = new System.Drawing.Size(125, 17);
+            this.chkStartEnd.TabIndex = 46;
+            this.chkStartEnd.Text = "Display START-END";
+            this.chkStartEnd.UseVisualStyleBackColor = true;
+            this.chkStartEnd.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
+            // 
+            // bttPrint
+            // 
+            this.bttPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bttPrint.Location = new System.Drawing.Point(303, 54);
+            this.bttPrint.Name = "bttPrint";
+            this.bttPrint.Size = new System.Drawing.Size(68, 26);
+            this.bttPrint.TabIndex = 45;
+            this.bttPrint.Text = "Call Stack";
+            this.bttPrint.UseVisualStyleBackColor = true;
+            this.bttPrint.Visible = false;
+            this.bttPrint.Click += new System.EventHandler(this.bttPrint_Click);
             // 
             // lblLevels
             // 
+            this.lblLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLevels.AutoSize = true;
-            this.lblLevels.Location = new System.Drawing.Point(241, 23);
+            this.lblLevels.Location = new System.Drawing.Point(283, 22);
             this.lblLevels.Name = "lblLevels";
             this.lblLevels.Size = new System.Drawing.Size(38, 13);
             this.lblLevels.TabIndex = 44;
@@ -236,7 +265,7 @@
             // bttNeWindow
             // 
             this.bttNeWindow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bttNeWindow.Location = new System.Drawing.Point(239, 83);
+            this.bttNeWindow.Location = new System.Drawing.Point(263, 86);
             this.bttNeWindow.Name = "bttNeWindow";
             this.bttNeWindow.Size = new System.Drawing.Size(111, 27);
             this.bttNeWindow.TabIndex = 2;
@@ -249,7 +278,7 @@
             this.cmbLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbLevels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbLevels.FormattingEnabled = true;
-            this.cmbLevels.Location = new System.Drawing.Point(303, 19);
+            this.cmbLevels.Location = new System.Drawing.Point(327, 19);
             this.cmbLevels.Name = "cmbLevels";
             this.cmbLevels.Size = new System.Drawing.Size(41, 21);
             this.cmbLevels.TabIndex = 40;
@@ -266,7 +295,7 @@
             this.PLeft_TOP.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PLeft_TOP.Location = new System.Drawing.Point(0, 0);
             this.PLeft_TOP.Name = "PLeft_TOP";
-            this.PLeft_TOP.Size = new System.Drawing.Size(356, 581);
+            this.PLeft_TOP.Size = new System.Drawing.Size(380, 581);
             this.PLeft_TOP.TabIndex = 45;
             // 
             // panelMethods
@@ -278,10 +307,11 @@
             this.panelMethods.BackColor = System.Drawing.Color.Transparent;
             this.panelMethods.Controls.Add(this.panelMethodsFlow);
             this.panelMethods.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.panelMethods.Location = new System.Drawing.Point(3, 118);
+            this.panelMethods.Location = new System.Drawing.Point(3, 119);
+            this.panelMethods.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.panelMethods.Name = "panelMethods";
             this.panelMethods.Padding = new System.Windows.Forms.Padding(1);
-            this.panelMethods.Size = new System.Drawing.Size(350, 457);
+            this.panelMethods.Size = new System.Drawing.Size(331, 431);
             this.panelMethods.TabIndex = 43;
             // 
             // panelMethodsFlow
@@ -303,7 +333,7 @@
             this.PLeftMain.Dock = System.Windows.Forms.DockStyle.Left;
             this.PLeftMain.Location = new System.Drawing.Point(0, 0);
             this.PLeftMain.Name = "PLeftMain";
-            this.PLeftMain.Size = new System.Drawing.Size(356, 581);
+            this.PLeftMain.Size = new System.Drawing.Size(380, 581);
             this.PLeftMain.TabIndex = 0;
             this.PLeftMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -313,34 +343,22 @@
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
             this.splitter1.Location = new System.Drawing.Point(0, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(356, 5);
+            this.splitter1.Size = new System.Drawing.Size(380, 5);
             this.splitter1.TabIndex = 47;
             this.splitter1.TabStop = false;
             // 
-            // bttPrint
+            // chkLostPoints
             // 
-            this.bttPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bttPrint.Location = new System.Drawing.Point(279, 51);
-            this.bttPrint.Name = "bttPrint";
-            this.bttPrint.Size = new System.Drawing.Size(68, 26);
-            this.bttPrint.TabIndex = 45;
-            this.bttPrint.Text = "Print";
-            this.bttPrint.UseVisualStyleBackColor = true;
-            this.bttPrint.Visible = false;
-            this.bttPrint.Click += new System.EventHandler(this.bttPrint_Click);
-            // 
-            // chkStartEnd
-            // 
-            this.chkStartEnd.AutoSize = true;
-            this.chkStartEnd.Checked = true;
-            this.chkStartEnd.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkStartEnd.Location = new System.Drawing.Point(141, 48);
-            this.chkStartEnd.Name = "chkStartEnd";
-            this.chkStartEnd.Size = new System.Drawing.Size(125, 17);
-            this.chkStartEnd.TabIndex = 46;
-            this.chkStartEnd.Text = "Display START-END";
-            this.chkStartEnd.UseVisualStyleBackColor = true;
-            this.chkStartEnd.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
+            this.chkLostPoints.AutoSize = true;
+            this.chkLostPoints.Checked = true;
+            this.chkLostPoints.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLostPoints.Location = new System.Drawing.Point(106, 68);
+            this.chkLostPoints.Name = "chkLostPoints";
+            this.chkLostPoints.Size = new System.Drawing.Size(83, 17);
+            this.chkLostPoints.TabIndex = 47;
+            this.chkLostPoints.Text = "Display Lost";
+            this.chkLostPoints.UseVisualStyleBackColor = true;
+            this.chkLostPoints.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
             // 
             // FormAsync
             // 
@@ -391,5 +409,6 @@
         private System.Windows.Forms.Label lblLevels;
         private System.Windows.Forms.Button bttPrint;
         private System.Windows.Forms.CheckBox chkStartEnd;
+        private System.Windows.Forms.CheckBox chkLostPoints;
     }
 }
