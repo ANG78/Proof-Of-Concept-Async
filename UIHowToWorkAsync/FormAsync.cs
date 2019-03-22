@@ -26,7 +26,7 @@ namespace UIHowToWorkAsync
             InitializeComponent();
 
 
-            for (int i = 2; i <= MaxMethods; i++)
+            for (int i = 1; i <= MaxMethods; i++)
                 cmbLevels.Items.Add(i);
 
             cmbLevels.SelectedItem = DefaultNumLevel;

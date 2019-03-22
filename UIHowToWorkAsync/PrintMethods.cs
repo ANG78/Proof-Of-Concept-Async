@@ -64,7 +64,7 @@ namespace UIHowToWorkAsync
                 callNext = @"VAR X" + parameter.Level + " = " + nextImp;
                 Print(parameter.Next);
                 Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
-                Write(current2, @"Return X" + parameter.Level + " + Y" + parameter.Level, color);
+                Write(current2, @"Return X" + parameter.Level + getNextSting + " + Y" + parameter.Level, color);
             }
             else
             {
