@@ -171,7 +171,7 @@ namespace UIHowToWorkAsync
             this.Enabled = true;
         }
 
-        IStrategyProcessReport CrearProcesador()
+        IProcessReportStrategy CrearProcesador()
         {
             return new StrategyPintar(grafica,
                                       chkOrdernar.Checked,

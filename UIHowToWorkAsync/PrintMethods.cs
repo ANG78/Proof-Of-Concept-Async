@@ -51,12 +51,12 @@ namespace UIHowToWorkAsync
             string nextImp, getNextSting, todo;
             nextImp = getNextSting = "";
 
-            if (parameter.Implementation is IGetStringIn2Phases)
+            if (parameter.Implementation is ICallNextDescription)
             {
-                nextImp = ((IGetStringIn2Phases)parameter.Implementation).CallNextDescription();
-                getNextSting = ((IGetStringIn2Phases)parameter.Implementation).HowToGetResultNextDescription();
+                nextImp = ((ICallNextDescription)parameter.Implementation).PreDescription();
+                getNextSting = ((ICallNextDescription)parameter.Implementation).PostDescription();
             }
-            todo = parameter.Implementation.MyWorkDescription();
+            todo = parameter.Implementation.DoIndependetWork.Description();
 
 
             if (parameter.Next != null)

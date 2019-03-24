@@ -24,7 +24,7 @@ namespace HowToWorkAsync
             lock (toLock)
             {
                 iteracion++;
-                cadena = "$" + metod + "[" + i + "]";
+                cadena = "$M[" + i + "]";
                 cadenaFinal.Add(cadena);
 
                 PopulateSerie(Type, metod, idThread, esTiempo);

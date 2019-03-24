@@ -5,7 +5,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HowToWorkAsync.Process
 {
-    public class StrategyPintar : IStrategyProcessReport
+    public class StrategyPintar : IProcessReportStrategy
     {
         readonly Chart chart;
         readonly bool chkOrder;

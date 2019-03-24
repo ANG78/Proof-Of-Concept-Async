@@ -3,9 +3,6 @@ using System.Threading;
 
 namespace HowToWorkAsync
 {
-
-   
-
     public class StrategyTodoFactory
     {
         public static IStrategyTodo GetInstance(ETypeWork tipo, IGenerateSerie generaSerie, int iteracionesOSegundos)
@@ -16,7 +13,7 @@ namespace HowToWorkAsync
             }
             else if (tipo == ETypeWork.SLEEPING)
             {
-                return new UseSleeping(generaSerie, iteracionesOSegundos);
+                return new Sleeping(generaSerie, iteracionesOSegundos);
             }
             throw new Exception("Not Expected TODO Strategy");
         }
@@ -63,12 +60,12 @@ namespace HowToWorkAsync
         }
     }
 
-    public class UseSleeping : IStrategyTodo
+    public class Sleeping : IStrategyTodo
     {
         protected readonly IGenerateSerie _generaSerie;
         protected readonly int _count;
 
-        public UseSleeping(IGenerateSerie gen, int count)
+        public Sleeping(IGenerateSerie gen, int count)
         {
             _generaSerie = gen;
             _count = count;

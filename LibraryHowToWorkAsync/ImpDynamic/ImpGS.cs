@@ -3,212 +3,89 @@ using System.Threading;
 
 namespace HowToWorkAsync.ImpDynamic
 {
-    public abstract class ImpGS : ClassTemplateImpl, IGetString
+    public abstract class MethodSync : ClassTemplateImpl, IGetString
     {
-        protected abstract string Body(string nameReflection);
-
-        public ImpGS(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-            : base(gen, pProcesamiento, pMethod, pNext)
+        
+        public MethodSync(IMyWorkSync pMyWork, IGenerateSerie gen, IUseMethod pMethod)
+            : base(gen, pMethod)
         {
-
+            DoIndependetWork = pMyWork;
         }
 
-        public string Main()
+        public IMyWork DoIndependetWork { get; private set; }
+
+
+        public IMyWorkSync MyWork { get; private set; }
+        
+
+        public abstract string Main();
+    }
+
+    public class MethodSyncFinal : MethodSync
+    {
+        public CallNextSync NextCallStrategy { get; private set; }
+
+        public MethodSyncFinal(IMyWorkSync pMyWork, IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
+            : base(pMyWork, gen, pMethod)
+        {
+        }
+
+        public override string Main()
         {
             var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
-            var result = Body(nameReflection);
+            var result = "Body(nameReflection)";
 
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return result;
         }
-
-        public override string MyWorkDescription()
-        {
-            return "MyWork()";
-        }
-
-
     }
 
-    public class MainNextAsync_NW : ImpGS, IGetStringIn2Phases
+    public class MethodSyncWithNext : MethodSync, IGetStringWithNext
     {
-        public MainNextAsync_NW(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
+        public ICallNextSyncStrategy NextCallStrategy { get; private set; }
+
+        public MethodSyncWithNext(IMyWorkSync pMyWork, CallNextSync pNextCallStrategy, IGenerateSerie gen, IUseMethod pMethod)
+            : base(pMyWork, gen, pMethod)
         {
+            NextCallStrategy = pNextCallStrategy;
         }
 
-        protected override string Body(string nameReflection)
+        public override string Main()
         {
+            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
-            var nextResult = ((IGetStringAsync)Next).MainAsync();
+            NextCallStrategy.Pre();
 
-            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            var currentResult = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
-            var resultNextStrings = nextResult;
+            if (NextCallStrategy.HaveToWaitPost())
+            {
+                if (NextCallStrategy.IsCompleted())
+                {
+                    GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                }
+            }
 
-            return currentResult + resultNextStrings.Result;
-        }
 
-        public override string CallNextDescription()
-        {
-            return "((IGetStringAsync)Next).MainAsync()";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-    }
-
-    public class MainNextAsync_AWAITER : ImpGS, IGetStringIn2Phases
-    {
-        public MainNextAsync_AWAITER(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
-        {
-        }
-
-        protected override string Body(string nameReflection)
-        {
-
-            var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
-
-            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            var resultNextStrings = nextResult.GetResult();
+            NextCallStrategy.Post();
+            var resultNextStrings = NextCallStrategy.Result;
 
             return currentResult + resultNextStrings;
         }
 
-        public override string CallNextDescription()
+        public string PreDescription()
         {
-            return "((IGetStringAsync)Next).MainAsync().GetAwaiter()";
+            return NextCallStrategy.PreDescription();
         }
 
-        public override string HowToGetResultNextDescription()
+        public string PostDescription()
         {
-            return ".GetResult()";
-        }
-    }
-
-    public class MainNextSync_WA : ImpGS, IGetStringIn2Phases
-    {
-        public MainNextSync_WA(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
-        {
-        }
-
-        protected override string Body(string nameReflection)
-        {
-            var nextResult = (IGetString)Next;
-
-            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            var resultNextStrings = nextResult.Main();
-
-            return currentResult + resultNextStrings;
-        }
-
-        public override string CallNextDescription()
-        {
-            return "(IGetString)Next";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return ".Main()";
+            return NextCallStrategy.PostDescription();
         }
     }
 
-
-    public class MainNextAsync_WF : ImpGS, IGetStringIn2Phases
-    {
-        public MainNextAsync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
-        {
-        }
-
-        protected override string Body(string nameReflection)
-        {
-            var nextResult = ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
-
-            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            var resultNextStrings = nextResult;
-
-            return currentResult + resultNextStrings;
-
-        }
-
-        public override string CallNextDescription()
-        {
-            return "MainAsync().GetAwaiter().GetResult()";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-    }
-
-    public class MainNextSync_WF : ImpGS, IGetStringIn2Phases
-    {
-
-        public MainNextSync_WF(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-           : base(gen, pProcesamiento, pMethod, pNext)
-        {
-        }
-
-        protected override string Body(string nameReflection)
-        {
-            var nextResult = ((IGetString)Next).Main();
-
-            var currentResult = MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            var resultNextStrings = nextResult;
-            return currentResult + resultNextStrings;
-        }
-
-        public override string CallNextDescription()
-        {
-            return "Main()";
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-    }
-
-    public class MainFinal : ImpGS
-    {
-        public MainFinal(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
-           : base(gen, pProcesamiento, pMethod, null)
-        {
-        }
-
-        protected override string Body(string nameReflection)
-        {
-            return MyWork(nameReflection, Thread.CurrentThread.ManagedThreadId);
-        }
-
-        public override string CallNextDescription()
-        {
-            return MyWorkDescription();
-        }
-
-        public override string HowToGetResultNextDescription()
-        {
-            return "";
-        }
-
-    }
-
-
+   
 }

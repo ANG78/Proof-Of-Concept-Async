@@ -31,46 +31,42 @@
 
             var processing = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
 
+            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+
+            MyWorkSync myW = new MyWorkSync(todo, reporter);
+
             if (method.Next == null)
             {
-                return new MainFinal(reporter, processing, method);
+                return new MethodSyncFinal(myW, reporter, processing, method);
             }
             else
             {
-                switch (method.CallNext)
+                CallNextSync callNext = null;
+                if (lastClass is IGetString)
                 {
-                    case ECallNext.WAIT_FIRST:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainNextAsync_WF(reporter, processing, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainNextSync_WF(reporter, processing, method, lastClass);
-                        }
-                    case ECallNext.WAIT_AFTER:
-                    case ECallNext.AWAITER_AFTER:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainNextAsync_AWAITER(reporter, processing, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainNextSync_WA(reporter, processing, method, lastClass);
-                        }
-                    case ECallNext.NOT_WAIT:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainNextAsync_NW(reporter, processing, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainNextSync_WA(reporter, processing, method, lastClass);
-                        }
+                    callNext = new CallNextSyncIfNextMethodIsSync((IGetString)lastClass);
                 }
+                else if (lastClass is IGetStringAsync)
+                {
+                    switch (method.CallNext)
+                    {
+                        case ECallNext.WAIT_FIRST:
+                            callNext = new CallNextSyncWaitFirstIfNextMethodIsAsync((IGetStringAsync)lastClass);
+                            break;
+                        case ECallNext.WAIT_AFTER:
+                        case ECallNext.AWAITER_AFTER:
+                        case ECallNext.NOT_WAIT:
+                            callNext = new CallNextSyncWaitAfterIfNextMethodIsAsync((IGetStringAsync)lastClass);
+                            break;
+
+                    }
+
+                }
+
+                return new MethodSyncWithNext(myW, callNext, reporter, method);
             }
 
-            return null;
+
         }
 
 
@@ -80,68 +76,60 @@
             if (method == null)
                 return null;
 
-            var procesamiento = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+            var processing = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+
+
+            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+
+            MyWorkAsync myW = null;
+            switch (method.MyImpl)
+            {
+                case EMyTypeImpl.ASYNC:
+                    myW = new MyWorkAsyncWait(todo, reporter);
+                    break;
+                case EMyTypeImpl.AWAITER:
+                    myW = new MyWorkAsyncAwaiter(todo, reporter);
+                    break;
+                case EMyTypeImpl.SYNC:
+                    myW = new MyWorkAsyncNotWait(todo, reporter);
+                    break;
+            }
 
 
             if (method.Next == null)
             {
-                switch (method.MyImpl)
-                {
-                    case EMyTypeImpl.ASYNC:
-                        return new MainAsyncFinal(reporter, procesamiento, method); 
-                    case EMyTypeImpl.AWAITER:
-                        return new MainAsyncFinal_Awaiter(reporter, procesamiento, method);
-                    case EMyTypeImpl.SYNC:
-                        return new MainAsyncFinal_NW(reporter, procesamiento, method);
-                }
+                return new MainAsyncFinal(myW, reporter, processing, method);
             }
-
             else
             {
-                switch (method.CallNext)
+
+                ICallNextAsyncStrategy callNext = null;
+
+                if (lastClass is IGetStringAsync)
                 {
-                    case ECallNext.WAIT_FIRST:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainAsyncNextAsync_WF(reporter, procesamiento, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainAsyncNextSync_WF(reporter, procesamiento, method, lastClass);
-                        }
-                    case ECallNext.WAIT_AFTER:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainAsyncNextAsync_WA(reporter, procesamiento, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainAsyncNextSync_WA(reporter, procesamiento, method, lastClass);
-                        }
-                    case ECallNext.NOT_WAIT:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainAsyncNextAsync_NW(reporter, procesamiento, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainAsyncNextSync_NW(reporter, procesamiento, method, lastClass);
-                        }
-                    case ECallNext.AWAITER_AFTER:
-                        if (lastClass is IGetStringAsync)
-                        {
-                            return new MainAsyncNextAsync_AWAITER(reporter, procesamiento, method, lastClass);
-                        }
-                        else
-                        {
-                            return new MainAsyncNextSync_WA(reporter, procesamiento, method, lastClass);
-                        }
+                    switch (method.CallNext)
+                    {
+                        case ECallNext.WAIT_FIRST:
+                            callNext = new CallNextAsyncWaitFirst(lastClass);
+                            break;
+                        case ECallNext.WAIT_AFTER:
+                            callNext = new CallNextAsyncWaitAfter(lastClass);
+                            break;
+                        case ECallNext.AWAITER_AFTER:
+                            callNext = new CallNextAsyncAwaiter(lastClass);
+                            break;
+                        case ECallNext.NOT_WAIT:
+                            callNext = new CallNextAsyncNotWait(lastClass);
+                            break;
+                    }
                 }
+                else
+                {
+                    callNext = new CallNextAsyncToAsync(lastClass);
+                }
+                return new MethodAsyncWithNext(myW, callNext, reporter, method);
             }
-            //                return new ImpGSAsync(reporter, procesamiento, method, lastClass);
-            return null;
+
         }
-
-
     }
 }

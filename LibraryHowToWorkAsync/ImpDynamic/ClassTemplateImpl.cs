@@ -6,13 +6,12 @@ namespace HowToWorkAsync.ImpDynamic
 
     public abstract class ClassBaseImpl
     {
-        protected IStrategyTodo WhatTodo;
+        
         protected IGenerateSerie generator { get; set; }
         public uint Level { get; set; }
 
-        public ClassBaseImpl(IGenerateSerie gen, IStrategyTodo pProcesamiento)
+        public ClassBaseImpl(IGenerateSerie gen)
         {
-            WhatTodo = pProcesamiento;
             generator = gen;
         }
 
@@ -21,33 +20,18 @@ namespace HowToWorkAsync.ImpDynamic
             return "0" + Level + ((this is IGetString) ? "-Main" : "-MainAsync");
         }
 
-        protected string TaskBase(string message, int idTread, uint numProc)
-        {
-            return WhatTodo.Todo(message, idTread);
-        }
-
-        protected int TaskBaseNumeroIteracionesOTiempo(string cadena, uint numProc)
-        {
-            return WhatTodo.AmountOfStepsOrMls();
-        }
+       
 
         protected string GetNameMethod(MethodBase nameMetodo)
         {
             if (nameMetodo.Name.Contains("MoveNext"))
             {
-                return nameMetodo.DeclaringType.Name.Substring(0, nameMetodo.DeclaringType.Name.IndexOf(">")).Replace("<", "");
+                return "0" + Level + nameMetodo.DeclaringType.Name.Substring(0, nameMetodo.DeclaringType.Name.IndexOf(">")).Replace("<", "");
             }
             else
             {
-                return nameMetodo.Name;
+                return "0" + Level + nameMetodo.Name;
             }
-        }
-
-        public string ObtenerLiteralSerie(MethodBase metodo, uint i)
-        {
-            var nameReflection = GetNameMethod(metodo);
-            string codFuncion = "0" + i + "-";
-            return codFuncion + nameReflection;
         }
 
         public void GenerateHeaderAndFoot(string literal, int idThread)
@@ -64,24 +48,17 @@ namespace HowToWorkAsync.ImpDynamic
 
     public abstract class ClassTemplateImpl : ClassBaseImpl
     {
-        protected IGetBase Next { get; private set; }
         protected IUseMethod Method;
 
-        public ClassTemplateImpl(IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod, IGetBase pNext)
-            : base(gen, pProcesamiento)
+        public ClassTemplateImpl(IGenerateSerie gen, IUseMethod pMethod)
+            : base(gen)
         {
-            Next = pNext;
             Method = pMethod;
             Level = (uint)pMethod.Level;
             pMethod.Implementation = (IGetBase)this;
         }
-
-        public string MyWork(string literal, int idThread)
-        {
-            return TaskBase("0" + Level + "-" + literal, idThread, Level);
-        }
-
-        public abstract string MyWorkDescription();
+               
+        
         public virtual string CallNextDescription()
         {
             return "";
