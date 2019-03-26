@@ -36,12 +36,12 @@ namespace HowToWorkAsync.ImpDynamic
 
         public void GenerateHeaderAndFoot(string literal, int idThread)
         {
-            generator.FillingOutTheReport(ETypePoint.STAR_END, "00" + Level + "-" + literal, (int)Level, idThread);
+            generator.FillingOutTheReport(ETypePoint.STAR_END, "0" + literal +  " STAR/END", (int)Level, idThread);
         }
 
         public void GenerateLostPoint(string literal, int idThread)
         {
-            generator.FillingOutTheReport(ETypePoint.LOST, "0" + Level + "-" + literal + "LOST", (int)Level, idThread);
+            generator.FillingOutTheReport(ETypePoint.LOST, "0"+ literal + "LOST", (int)Level, idThread);
         }
 
     }

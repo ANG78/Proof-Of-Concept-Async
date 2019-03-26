@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,8 +14,18 @@ namespace HowToWorkAsync.ImpDynamic
             DoIndependetWork = pMyWork;
         }
         public abstract Task<string> MainAsync();
+
         public IMyWork DoIndependetWork { get; private set; }
         protected IMyWorkASync MyWork { get {  return (IMyWorkASync)(DoIndependetWork); } }
+
+        public virtual string Validate()
+        {
+            if (DoIndependetWork == null)
+                return "DoIndependetWork == null in Level " + Level;
+
+            return null;
+        }
+
     }
 
 
@@ -73,6 +84,24 @@ namespace HowToWorkAsync.ImpDynamic
         public string PostDescription()
         {
             return NextCallStrategy.PostDescription();
+        }
+
+        public override string Validate()
+        {
+            string result = base.Validate();
+
+            if (!string.IsNullOrWhiteSpace(result))
+                return result;
+
+            if (NextCallStrategy == null)
+                return "NextCallStrategy == null in Level " + Level;
+
+            string resultnext = NextCallStrategy.Validate(Level);
+            if (!string.IsNullOrWhiteSpace(result))
+                return resultnext;
+
+
+            return null;
         }
 
     }

@@ -52,7 +52,7 @@ namespace HowToWorkAsync
                 
                 Thread.Sleep(5);
             }
-            return cadena1;
+            return cadena1.Replace("Async","");
         }
         public int AmountOfStepsOrMls()
         {
@@ -76,7 +76,7 @@ namespace HowToWorkAsync
             _generaSerie.FillingOutTheReport(ETypePoint.TODO, idSerie, _count, idThread, true);
             Console.Write("sleeping thread.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
             Thread.Sleep(ETypeWork.SLEEPING.Factor() * _count);
-            return _generaSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, _count, idThread, true);
+            return _generaSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, _count, idThread, true).Replace("Async", ""); ;
         }
 
         public bool IsTime()

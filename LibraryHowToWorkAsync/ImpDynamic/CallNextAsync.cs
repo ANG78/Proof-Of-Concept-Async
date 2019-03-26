@@ -5,8 +5,6 @@ namespace HowToWorkAsync.ImpDynamic
 {
     #region WithNext
 
-
-
     public abstract class CallNextAsync : ICallNextAsyncStrategy
     {
         public IGetBase Next { get; set; }
@@ -25,7 +23,15 @@ namespace HowToWorkAsync.ImpDynamic
 
         public abstract string PreDescription();
         public abstract string PostDescription();
-        
+
+        public virtual string Validate(uint Level)
+        {
+            if (Next == null)
+                return "Next == null in Level " + Level;
+
+            return (Next.Validate());
+
+        }
     }
 
     public class CallNextAsyncWaitAfter : CallNextAsync
@@ -54,7 +60,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PostDescription()
         {
-            return "await";
+            return "await Next";
         }
 
         public override bool HaveToWaitPre()
@@ -117,7 +123,7 @@ namespace HowToWorkAsync.ImpDynamic
             return false;
         }
 
-       
+
     }
 
     public class CallNextAsyncNotWait : CallNextAsync
@@ -130,7 +136,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override async Task Pre()
         {
-            myTask = ((IGetStringAsync)Next).MainAsync();
+            myTask = Task.Run(() => { return ((IGetStringAsync)Next).MainAsync(); });
         }
 
         public async override Task Post()
@@ -145,7 +151,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PostDescription()
         {
-            return ".Result";
+            return "Next.Result";
         }
 
         public override bool HaveToWaitPre()
@@ -174,13 +180,18 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override async Task Pre()
         {
-            myTask = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
+            myTask = Task.Run(() =>
+            {
+                return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
+            }).GetAwaiter();
+
         }
 
-        public override Task Post()
+
+        public override async Task Post()
         {
             Result = myTask.GetResult();
-            return null;
+            // return null;
         }
 
         public override string PreDescription()
@@ -190,7 +201,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PostDescription()
         {
-            return ".GetResult()";
+            return "Next.GetResult()";
         }
 
         public override bool HaveToWaitPre()

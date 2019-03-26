@@ -7,6 +7,7 @@ namespace HowToWorkAsync
         uint Level { get; }
         string Ident();
         IMyWork DoIndependetWork { get; }
+        string Validate();
     }
 
     public interface IGetString : IGetBase

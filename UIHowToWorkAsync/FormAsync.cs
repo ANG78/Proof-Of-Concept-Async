@@ -18,7 +18,7 @@ namespace UIHowToWorkAsync
         private int DefaulttrackMethod = 25;
         private ETypeImpl DefaultETypeImplementation = ETypeImpl.ASYNC;
         private int MaxMethods = 6;
-        private int DefaultNumLevel = 4;
+        private int DefaultNumLevel = 2;
 
 
         public FormAsync()
@@ -130,7 +130,12 @@ namespace UIHowToWorkAsync
                 //  {
                 Launcher lanzador = null;
                 implementacionMain = HowToWorkAsync.ImpDynamic.FactoryImpl.GetInstance(Method, reporter);
-
+                string resValidate = implementacionMain.Validate();
+                if (!string.IsNullOrEmpty(resValidate))
+                {
+                    MessageBox.Show(resValidate);
+                    return;
+                }
                 try
                 {
 

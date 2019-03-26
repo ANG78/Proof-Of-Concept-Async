@@ -29,20 +29,20 @@
         private void InitializeComponent()
         {
             this.groupBoxMethod = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbNextImpl = new System.Windows.Forms.ComboBox();
+            this.cmbNextAlg = new System.Windows.Forms.ComboBox();
             this.groupTodo = new System.Windows.Forms.GroupBox();
             this.cmbMyImpl = new System.Windows.Forms.ComboBox();
             this.cmb = new System.Windows.Forms.ComboBox();
             this.lblTrack = new System.Windows.Forms.Label();
             this.trackMethod = new System.Windows.Forms.TrackBar();
-            this.cmbNextAlg = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.groupBoxMethod.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.groupTodo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackMethod)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxMethod
@@ -61,6 +61,17 @@
             this.groupBoxMethod.Text = "Method";
             this.groupBoxMethod.Enter += new System.EventHandler(this.groupBoxMethod_Enter);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.cmbNextImpl);
+            this.groupBox1.Controls.Add(this.cmbNextAlg);
+            this.groupBox1.Location = new System.Drawing.Point(276, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(146, 65);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "How to call the Next One";
+            // 
             // cmbNextImpl
             // 
             this.cmbNextImpl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -70,6 +81,16 @@
             this.cmbNextImpl.Size = new System.Drawing.Size(62, 21);
             this.cmbNextImpl.TabIndex = 14;
             this.cmbNextImpl.SelectedIndexChanged += new System.EventHandler(this.cmbImplementation_SelectedIndexChanged);
+            // 
+            // cmbNextAlg
+            // 
+            this.cmbNextAlg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNextAlg.FormattingEnabled = true;
+            this.cmbNextAlg.Location = new System.Drawing.Point(10, 39);
+            this.cmbNextAlg.Name = "cmbNextAlg";
+            this.cmbNextAlg.Size = new System.Drawing.Size(109, 21);
+            this.cmbNextAlg.TabIndex = 12;
+            this.cmbNextAlg.SelectedIndexChanged += new System.EventHandler(this.cmbNextAlg_SelectedIndexChanged);
             // 
             // groupTodo
             // 
@@ -82,7 +103,7 @@
             this.groupTodo.Size = new System.Drawing.Size(260, 65);
             this.groupTodo.TabIndex = 13;
             this.groupTodo.TabStop = false;
-            this.groupTodo.Text = "Todo";
+            this.groupTodo.Text = "DoIndependetWork";
             // 
             // cmbMyImpl
             // 
@@ -127,16 +148,6 @@
             this.trackMethod.Value = 50;
             this.trackMethod.Scroll += new System.EventHandler(this.trackMethod_Scroll);
             // 
-            // cmbNextAlg
-            // 
-            this.cmbNextAlg.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbNextAlg.FormattingEnabled = true;
-            this.cmbNextAlg.Location = new System.Drawing.Point(10, 39);
-            this.cmbNextAlg.Name = "cmbNextAlg";
-            this.cmbNextAlg.Size = new System.Drawing.Size(109, 21);
-            this.cmbNextAlg.TabIndex = 12;
-            this.cmbNextAlg.SelectedIndexChanged += new System.EventHandler(this.cmbNextAlg_SelectedIndexChanged);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -144,17 +155,6 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(0, 13);
             this.label2.TabIndex = 10;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.cmbNextImpl);
-            this.groupBox1.Controls.Add(this.cmbNextAlg);
-            this.groupBox1.Location = new System.Drawing.Point(276, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(146, 65);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "How to call the Next One";
             // 
             // UseMethod
             // 
@@ -166,10 +166,10 @@
             this.Load += new System.EventHandler(this.UseMethod_Load);
             this.groupBoxMethod.ResumeLayout(false);
             this.groupBoxMethod.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.groupTodo.ResumeLayout(false);
             this.groupTodo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackMethod)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

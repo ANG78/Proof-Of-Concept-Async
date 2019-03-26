@@ -1,4 +1,5 @@
 ﻿
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace HowToWorkAsync
@@ -18,12 +19,17 @@ namespace HowToWorkAsync
         string Result { get; }
     }
 
-    public interface ICallNextStrategyDescription
+    public interface ICallNextStrategyDescription :  ICallNextValidate
     {
         bool HaveToWaitPost();
         bool IsCompleted();
         string PreDescription();
         string PostDescription();
+    }
+
+    public interface ICallNextValidate
+    {
+        string Validate(uint Level);
     }
 
     public interface ICallNextDescription

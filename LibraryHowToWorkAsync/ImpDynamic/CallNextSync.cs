@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace HowToWorkAsync.ImpDynamic
 {
@@ -6,14 +7,26 @@ namespace HowToWorkAsync.ImpDynamic
     public abstract class CallNextSync : ICallNextSyncStrategy
     {
         public IGetBase Next { get; set; }
-        public string Result { get; protected set; }
+        protected string result;
+        public virtual string Result { get { return result; } protected set { result = value; } }
 
         public abstract bool HaveToWaitPost();
         public abstract bool IsCompleted();
         public abstract void Pre();
-        public abstract void Post();
         public abstract string PreDescription();
         public abstract string PostDescription();
+
+        public virtual string Validate(uint Level)
+        {
+            if (Next == null)
+                return "Next == null in Level " + Level;
+
+            return (Next.Validate());
+
+        }
+
+        public abstract void Post();
+
 
         public CallNextSync(IGetBase pNext)
         {
@@ -24,7 +37,7 @@ namespace HowToWorkAsync.ImpDynamic
 
     public class CallNextSyncWaitFirstIfNextMethodIsAsync : CallNextSync
     {
-
+      
         public CallNextSyncWaitFirstIfNextMethodIsAsync(IGetStringAsync pNext)
                : base(pNext)
         {
@@ -32,16 +45,17 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override void Pre()
         {
-            Result = ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
+            Result = Task.Run(() =>
+            {
+                return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
+            }).GetAwaiter().GetResult();
         }
 
-        public override void Post()
-        {
-        }
+      
 
         public override string PreDescription()
         {
-            return "((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult()";
+            return "Next.MainAsync().GetAwaiter().GetResult()";
         }
 
         public override string PostDescription()
@@ -58,11 +72,19 @@ namespace HowToWorkAsync.ImpDynamic
         {
             return true;
         }
+
+        public override void Post()
+        {
+
+        }
+
+       
+
     }
 
     public class CallNextSyncWaitAfterIfNextMethodIsAsync : CallNextSync
     {
-        TaskAwaiter<string> Task;
+        TaskAwaiter<string> TaskWaiter;
 
         public CallNextSyncWaitAfterIfNextMethodIsAsync(IGetStringAsync pNext)
               : base(pNext)
@@ -71,23 +93,21 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override void Pre()
         {
-            Task = ((IGetStringAsync)Next).MainAsync().GetAwaiter();
-        }
+             TaskWaiter = Task.Run(() =>
+            {
+                return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
+            }).GetAwaiter();
 
-        public override void Post()
-        {
-            Result = Task.GetResult();
         }
-
 
         public override string PreDescription()
         {
-            return "((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult()";
+            return "Next.MainAsync().GetAwaiter()";
         }
 
         public override string PostDescription()
         {
-            return "";
+            return "Next.GetResult()";
         }
 
         public override bool HaveToWaitPost()
@@ -97,7 +117,12 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override bool IsCompleted()
         {
-            return Task.IsCompleted;
+            return TaskWaiter.IsCompleted;
+        }
+
+        public override void Post()
+        {
+            Result = TaskWaiter.GetResult();
         }
     }
 
@@ -113,13 +138,10 @@ namespace HowToWorkAsync.ImpDynamic
             Result = ((IGetString)Next).Main();
         }
 
-        public override void Post()
-        {
-        }
 
         public override string PreDescription()
         {
-            return "((IGetString)Next).Main()";
+            return "Next.Main()";
         }
 
         public override string PostDescription()
@@ -135,6 +157,11 @@ namespace HowToWorkAsync.ImpDynamic
         public override bool IsCompleted()
         {
             return true;
+        }
+
+        public override void Post()
+        {
+          
         }
     }
 

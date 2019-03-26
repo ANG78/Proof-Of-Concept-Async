@@ -18,16 +18,16 @@ namespace HowToWorkAsync
         public List<string> cadenaFinal = new List<string>();
         Dictionary<string, Serie> _series = new Dictionary<string, Serie>();
 
-        public string FillingOutTheReport(ETypePoint Type, string metod, int i, int idThread, bool esTiempo = false)
+        public string FillingOutTheReport(ETypePoint Type, string method, int i, int idThread, bool esTiempo = false)
         {
             string cadena;
             lock (toLock)
             {
                 iteracion++;
-                cadena = "$M[" + i + "]";
+                cadena = "$" + method + "[" + i + "]";
                 cadenaFinal.Add(cadena);
 
-                PopulateSerie(Type, metod, idThread, esTiempo);
+                PopulateSerie(Type, method, idThread, esTiempo);
 
             }
             Console.WriteLine(cadena);

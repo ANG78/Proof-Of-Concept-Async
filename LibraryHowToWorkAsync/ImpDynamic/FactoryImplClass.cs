@@ -9,18 +9,19 @@
                 return null;
 
 
+            IGetBase result = null;
             var lastClass = GetInstance(method.Next, reporter);
             if (method.TypeNextImpl == ETypeImpl.ASYNC)
             {
-                return GetInstanceAsync(method, reporter, lastClass);
+                result =  GetInstanceAsync(method, reporter, lastClass);
             }
             else if (method.TypeNextImpl == ETypeImpl.SYNC)
             {
-                return GetInstanceNoAsync(method, reporter, lastClass);
+                result = GetInstanceNoAsync(method, reporter, lastClass);
             }
 
 
-            return null;
+            return result;
         }
 
 

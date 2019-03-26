@@ -43,8 +43,19 @@ namespace UIHowToWorkAsync
                 colorNext = color;
 
             TreeNode parent = current ?? tree.Nodes[tree.Nodes.Count - 1];
-            current = Write(parent, callNext + " " + literal + "     (" + parameter.TypeNextImpl + ")", colorNext);
 
+            if (string.IsNullOrWhiteSpace(callNext))
+            {
+                current = Write(parent, literal, colorNext);
+            }
+            else
+            {
+                current = Write(parent, callNext, colorNext);
+                var colorHeader = colors[parameter.Level % colors.Length];
+                current = Write(current, literal, colorHeader);
+            }
+            
+            
             colorNext = color;
             var current2 = current;
 
@@ -61,10 +72,12 @@ namespace UIHowToWorkAsync
 
             if (parameter.Next != null)
             {
+                nextImp = nextImp.Replace("Next", parameter.Next.IdMethod);
                 callNext = @"VAR X" + parameter.Level + " = " + nextImp;
                 Print(parameter.Next);
                 Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
-                Write(current2, @"Return X" + parameter.Level + getNextSting + " + Y" + parameter.Level, color);
+                getNextSting = getNextSting.Replace("Next", "X" + parameter.Level);
+                Write(current2, @"Return " + getNextSting + " +  Y" + parameter.Level, color);
             }
             else
             {
