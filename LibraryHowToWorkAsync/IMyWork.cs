@@ -15,7 +15,7 @@ namespace HowToWorkAsync
     public interface IMyWorkASync : IMyWork
     {
         bool HaveToWait();
-        Task<string> GetString(string name, int idThread);
+        Task<string> GetStringAsync(string name, int idThread);
     }
 
 }

@@ -7,7 +7,7 @@ namespace HowToWorkAsync.ImpDynamic
 {
 
     public abstract class MethodAsync : ClassTemplateImpl, IGetStringAsync
-    {      
+    {
         public MethodAsync(IMyWorkASync pMyWork, IGenerateSerie gen, IUseMethod pMethod)
         : base(gen, pMethod)
         {
@@ -16,7 +16,7 @@ namespace HowToWorkAsync.ImpDynamic
         public abstract Task<string> MainAsync();
 
         public IMyWork DoIndependetWork { get; private set; }
-        protected IMyWorkASync MyWork { get {  return (IMyWorkASync)(DoIndependetWork); } }
+        protected IMyWorkASync MyWork { get { return (IMyWorkASync)(DoIndependetWork); } }
 
         public virtual string Validate()
         {
@@ -26,84 +26,10 @@ namespace HowToWorkAsync.ImpDynamic
             return null;
         }
 
-    }
-
-
-    public class MethodAsyncWithNext : MethodAsync, IGetStringAsyncWithNext
-    {
-        public ICallNextAsyncStrategy NextCallStrategy { get; private set; }
-
-        public MethodAsyncWithNext(IMyWorkASync pMyWork, ICallNextAsyncStrategy pNextCallStrategy, IGenerateSerie gen, IUseMethod pMethod)
-            : base(pMyWork, gen, pMethod)
+        public bool PossibleDeadLockUsingAwaiter()
         {
-            NextCallStrategy = pNextCallStrategy;
+            return (MyWork.HaveToWait());
         }
-
-        public override async Task<string> MainAsync()
-        {
-            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
-            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            if (NextCallStrategy.HaveToWaitPre())
-            {
-                await NextCallStrategy.Pre();
-            }
-            else
-            {
-                NextCallStrategy.Pre();
-            }
-
-
-            var currentResult = await MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            if (NextCallStrategy.HaveToWaitPost())
-            {
-                if (!NextCallStrategy.IsCompleted())
-                {
-                    GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-                }
-
-                await NextCallStrategy.Post();
-            }
-            else
-            {
-                NextCallStrategy.Post();
-            }
-
-            var resultNextStrings = NextCallStrategy.Result;
-
-            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            return currentResult + resultNextStrings;
-        }
-
-        public string PreDescription()
-        {
-            return NextCallStrategy.PreDescription();
-        }
-
-        public string PostDescription()
-        {
-            return NextCallStrategy.PostDescription();
-        }
-
-        public override string Validate()
-        {
-            string result = base.Validate();
-
-            if (!string.IsNullOrWhiteSpace(result))
-                return result;
-
-            if (NextCallStrategy == null)
-                return "NextCallStrategy == null in Level " + Level;
-
-            string resultnext = NextCallStrategy.Validate(Level);
-            if (!string.IsNullOrWhiteSpace(result))
-                return resultnext;
-
-
-            return null;
-        }
-
     }
 
 
@@ -117,25 +43,72 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override async Task<string> MainAsync()
         {
-            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
-            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            var nameReflection = GenerateHeaderAndFoot(MethodBase.GetCurrentMethod(), Thread.CurrentThread.ManagedThreadId);
 
             var result = "";
             if (MyWork.HaveToWait())
             {
-                result = await MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
+                result = await MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId);
             }
             else
             {
-                result = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
+                result = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
 
-
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
             return result;
         }
+
     }
+
+    public abstract class MethodAsyncWithNext : MethodAsync, ICallNextDescription
+    {
+        public IGetBase Next { get; private set; }
+        public abstract string PreDescription();
+        public abstract string PostDescription();
+
+        public virtual string Validate(uint Level)
+        {
+            string result = base.Validate();
+
+            if (!string.IsNullOrWhiteSpace(result))
+                return result;
+
+            if (Next == null)
+                return "Next == null in Level " + Level;
+
+            return (Next.Validate());
+
+        }
+
+        public MethodAsyncWithNext(IMyWorkASync pMyWork, IGetBase pNext, IGenerateSerie gen, IUseMethod pMethod)
+            : base(pMyWork, gen, pMethod)
+        {
+            Next = pNext;
+        }
+
+        public override string Validate()
+        {
+            string result = base.Validate();
+
+            if (!string.IsNullOrWhiteSpace(result))
+                return result;
+
+            if (Next == null)
+                return "Next == null in Level " + Level;
+
+            string resultnext = Next.Validate();
+            if (!string.IsNullOrWhiteSpace(result))
+                return resultnext;
+
+
+            return null;
+        }
+
+    }
+
+
+
 
 }
 

@@ -44,6 +44,17 @@ namespace HowToWorkAsync.ImpDynamic
             generator.FillingOutTheReport(ETypePoint.LOST, "0"+ literal + "LOST", (int)Level, idThread);
         }
 
+        protected string GenerateHeaderAndFoot(MethodBase param, int idThread)
+        {
+            var nameReflection = GetNameMethod(param);
+            GenerateHeaderAndFoot(nameReflection, idThread);
+            return nameReflection;
+        }
+
+        protected void GeranateFoot(string stringSerie, int idThread)
+        {
+            GenerateHeaderAndFoot(stringSerie, idThread);
+        }
     }
 
     public abstract class ClassTemplateImpl : ClassBaseImpl
@@ -57,17 +68,8 @@ namespace HowToWorkAsync.ImpDynamic
             Level = (uint)pMethod.Level;
             pMethod.Implementation = (IGetBase)this;
         }
-               
         
-        public virtual string CallNextDescription()
-        {
-            return "";
-        }
-
-        public virtual string HowToGetResultNextDescription()
-        {
-            return "";
-        }
+       
     }
 
 

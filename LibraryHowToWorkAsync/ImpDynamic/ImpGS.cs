@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace HowToWorkAsync.ImpDynamic
@@ -32,8 +31,6 @@ namespace HowToWorkAsync.ImpDynamic
 
     public class MethodSyncFinal : MethodSync
     {
-        public CallNextSync NextCallStrategy { get; private set; }
-
         public MethodSyncFinal(IMyWorkSync pMyWork, IGenerateSerie gen, IStrategyTodo pProcesamiento, IUseMethod pMethod)
             : base(pMyWork, gen, pMethod)
         {
@@ -50,63 +47,16 @@ namespace HowToWorkAsync.ImpDynamic
             return result;
         }
 
-        public override string Validate()
-        {
-            string result = base.Validate();
-
-            if (!string.IsNullOrWhiteSpace(result))
-                return result;
-
-            if (NextCallStrategy == null)
-                return "NextCallStrategy == null in Level " + Level;
-
-            return null;
-        }
-
     }
 
-    public class MethodSyncWithNext : MethodSync, IGetStringWithNext
+    public abstract class MethodSyncWithNext : MethodSync, ICallNextDescription
     {
-        public ICallNextSyncStrategy NextCallStrategy { get; private set; }
+        public IGetBase Next { get; private set; }
 
-        public MethodSyncWithNext(IMyWorkSync pMyWork, CallNextSync pNextCallStrategy, IGenerateSerie gen, IUseMethod pMethod)
+        public MethodSyncWithNext(IMyWorkSync pMyWork, IGetBase pNext, IGenerateSerie gen, IUseMethod pMethod)
             : base(pMyWork, gen, pMethod)
         {
-            NextCallStrategy = pNextCallStrategy;
-        }
-
-        public override string Main()
-        {
-            var nameReflection = GetNameMethod(MethodBase.GetCurrentMethod());
-            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            NextCallStrategy.Pre();
-
-            var currentResult = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
-
-            if (NextCallStrategy.HaveToWaitPost())
-            {
-                if (!NextCallStrategy.IsCompleted())
-                {
-                    GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
-                }
-
-            }
-            NextCallStrategy.Post();
-            var resultNextStrings = NextCallStrategy.Result;
-
-            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
-            return currentResult + resultNextStrings;
-        }
-
-        public string PreDescription()
-        {
-            return NextCallStrategy.PreDescription();
-        }
-
-        public string PostDescription()
-        {
-            return NextCallStrategy.PostDescription();
+            Next = pNext;
         }
 
         public override string Validate()
@@ -116,15 +66,19 @@ namespace HowToWorkAsync.ImpDynamic
             if (!string.IsNullOrWhiteSpace(result))
                 return result;
 
-            if (NextCallStrategy == null)
-                return "NextCallStrategy == null in Level " + Level;
+            if (Next == null)
+                return "Next == null in Level " + Level;
 
-            string resultnext = NextCallStrategy.Validate(Level);
+            string resultnext = Next.Validate();
             if (!string.IsNullOrWhiteSpace(result))
                 return resultnext;
 
             return null;
         }
+
+        public abstract string PreDescription();
+        public abstract string PostDescription();
+
     }
 
 }

@@ -43,7 +43,7 @@
             this.tree.Margin = new System.Windows.Forms.Padding(0);
             this.tree.Name = "tree";
             this.tree.SelectedImageIndex = 0;
-            this.tree.Size = new System.Drawing.Size(458, 331);
+            this.tree.Size = new System.Drawing.Size(694, 331);
             this.tree.TabIndex = 26;
             this.tree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tree_AfterSelect);
             // 
@@ -59,7 +59,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(458, 331);
+            this.ClientSize = new System.Drawing.Size(694, 331);
             this.Controls.Add(this.tree);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.ImeMode = System.Windows.Forms.ImeMode.On;

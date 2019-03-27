@@ -36,7 +36,7 @@ namespace UIHowToWorkAsync
             if (parameter == null || parameter.Implementation == null)
                 return;
 
-            string literal = parameter.IdMethod;
+            string literal = parameter.IdMethod ;
             var color = colors[parameter.Level % colors.Length];
 
             if (parameter.Level == 0)
@@ -46,13 +46,13 @@ namespace UIHowToWorkAsync
 
             if (string.IsNullOrWhiteSpace(callNext))
             {
-                current = Write(parent, literal, colorNext);
+                current = Write(parent, literal + " " + (parameter.Implementation is IGetString ? " Main()" : "MainAsync()"), colorNext);
             }
             else
             {
                 current = Write(parent, callNext, colorNext);
                 var colorHeader = colors[parameter.Level % colors.Length];
-                current = Write(current, literal, colorHeader);
+                current = Write(current, literal + " " + (parameter.Implementation is IGetString ? " Main()" : "MainAsync()"), colorHeader);
             }
             
             
@@ -77,7 +77,7 @@ namespace UIHowToWorkAsync
                 Print(parameter.Next);
                 Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
                 getNextSting = getNextSting.Replace("Next", "X" + parameter.Level);
-                Write(current2, @"Return " + getNextSting + " +  Y" + parameter.Level, color);
+                Write(current2, @"Return" + " Y" + parameter.Level + " + " + getNextSting, color);
             }
             else
             {

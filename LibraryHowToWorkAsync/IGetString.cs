@@ -18,7 +18,8 @@ namespace HowToWorkAsync
 
     public interface IGetStringAsync : IGetBase
     {
-        Task<string> MainAsync();        
+        Task<string> MainAsync();
+        bool PossibleDeadLockUsingAwaiter();
     }
 
 }

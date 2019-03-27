@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICallNextStrategy.cs" />
     <Compile Include="IGetString.cs" />
     <Compile Include="ImpDynamic\CallNextAsync.cs" />
     <Compile Include="ImpDynamic\CallNextSync.cs" />

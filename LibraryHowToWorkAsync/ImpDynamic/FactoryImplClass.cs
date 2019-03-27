@@ -42,29 +42,29 @@
             }
             else
             {
-                CallNextSync callNext = null;
+                IGetString result = null;
                 if (lastClass is IGetString)
                 {
-                    callNext = new CallNextSyncIfNextMethodIsSync((IGetString)lastClass);
+                    result = new CallNextSyncIfNextMethodIsSync(myW,(IGetString)lastClass,reporter, method);
                 }
                 else if (lastClass is IGetStringAsync)
                 {
                     switch (method.CallNext)
                     {
                         case ECallNext.WAIT_FIRST:
-                            callNext = new CallNextSyncWaitFirstIfNextMethodIsAsync((IGetStringAsync)lastClass);
+                            result = new CallNextSyncWaitFirstIfNextMethodIsAsync(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
                         case ECallNext.WAIT_AFTER:
                         case ECallNext.AWAITER_AFTER:
                         case ECallNext.NOT_WAIT:
-                            callNext = new CallNextSyncWaitAfterIfNextMethodIsAsync((IGetStringAsync)lastClass);
+                            result = new CallNextSyncWaitAfterIfNextMethodIsAsync(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
 
                     }
 
                 }
 
-                return new MethodSyncWithNext(myW, callNext, reporter, method);
+                return result;
             }
 
 
@@ -104,31 +104,30 @@
             else
             {
 
-                ICallNextAsyncStrategy callNext = null;
-
+                IGetStringAsync result = null;
                 if (lastClass is IGetStringAsync)
                 {
                     switch (method.CallNext)
                     {
                         case ECallNext.WAIT_FIRST:
-                            callNext = new CallNextAsyncWaitFirst(lastClass);
+                            result = new CallNextAsyncWaitFirst(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
                         case ECallNext.WAIT_AFTER:
-                            callNext = new CallNextAsyncWaitAfter(lastClass);
+                            result = new CallNextAsyncWaitAfter(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
                         case ECallNext.AWAITER_AFTER:
-                            callNext = new CallNextAsyncAwaiter(lastClass);
+                            result = new CallNextAsyncAwaiter(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
                         case ECallNext.NOT_WAIT:
-                            callNext = new CallNextAsyncNotWait(lastClass);
+                            result = new CallNextAsyncNotWait(myW, (IGetStringAsync)lastClass, reporter, method);
                             break;
                     }
                 }
                 else
                 {
-                    callNext = new CallNextAsyncToAsync(lastClass);
+                    result = new CallNextAsyncToAsync(myW, (IGetString)lastClass, reporter, method);
                 }
-                return new MethodAsyncWithNext(myW, callNext, reporter, method);
+                return result;
             }
 
         }

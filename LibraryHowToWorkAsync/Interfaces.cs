@@ -3,7 +3,15 @@ using System.Collections.Generic;
 
 namespace HowToWorkAsync
 {
-   
+
+
+    public interface ICallNextDescription
+    {
+        string PreDescription();
+        string PostDescription();
+    }
+
+
     public interface IProcessReportStrategy
     {
         void Execute(Report report);

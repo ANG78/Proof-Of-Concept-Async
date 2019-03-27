@@ -55,7 +55,7 @@ namespace HowToWorkAsync.ImpDynamic
         {
         }
 
-        public abstract Task<string> GetString(string name, int idThread);
+        public abstract Task<string> GetStringAsync(string name, int idThread);
         public abstract bool HaveToWait();
     }
 
@@ -66,7 +66,7 @@ namespace HowToWorkAsync.ImpDynamic
         {
         }
 
-        public override async Task<string> GetString(string name, int idThread)
+        public override async Task<string> GetStringAsync(string name, int idThread)
         {
             return await Task.Run(() =>
             {
@@ -92,7 +92,7 @@ namespace HowToWorkAsync.ImpDynamic
         {
         }
 
-        public override async Task<string> GetString(string name, int idThread)
+        public override async Task<string> GetStringAsync(string name, int idThread)
         {
             return Task.Run(() =>
                 {
@@ -119,7 +119,7 @@ namespace HowToWorkAsync.ImpDynamic
         {
         }
 
-        public override async Task<string> GetString(string name, int idThread)
+        public override async Task<string> GetStringAsync(string name, int idThread)
         {
             return DoIndepentWork(name, idThread);
         }

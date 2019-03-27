@@ -1,57 +1,45 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HowToWorkAsync.ImpDynamic
 {
 
-    public abstract class CallNextSync : ICallNextSyncStrategy
+    public class CallNextSyncWaitFirstIfNextMethodIsAsync : MethodSyncWithNext
     {
-        public IGetBase Next { get; set; }
-        protected string result;
-        public virtual string Result { get { return result; } protected set { result = value; } }
+        public new IGetStringAsync Next { get { return (IGetStringAsync)base.Next; } }
 
-        public abstract bool HaveToWaitPost();
-        public abstract bool IsCompleted();
-        public abstract void Pre();
-        public abstract string PreDescription();
-        public abstract string PostDescription();
-
-        public virtual string Validate(uint Level)
-        {
-            if (Next == null)
-                return "Next == null in Level " + Level;
-
-            return (Next.Validate());
-
-        }
-
-        public abstract void Post();
-
-
-        public CallNextSync(IGetBase pNext)
-        {
-            Next = pNext;
-        }
-
-    }
-
-    public class CallNextSyncWaitFirstIfNextMethodIsAsync : CallNextSync
-    {
-      
-        public CallNextSyncWaitFirstIfNextMethodIsAsync(IGetStringAsync pNext)
-               : base(pNext)
+        public CallNextSyncWaitFirstIfNextMethodIsAsync(IMyWorkSync pMyWork, IGetStringAsync pNext, IGenerateSerie gen, IUseMethod pMethod)
+            : base(pMyWork, pNext, gen, pMethod)
         {
         }
 
-        public override void Pre()
+        public override string Main()
         {
-            Result = Task.Run(() =>
+            var nameReflection = GenerateHeaderAndFoot(MethodBase.GetCurrentMethod(), Thread.CurrentThread.ManagedThreadId);
+
+            dynamic resultNextStrings = null;
+
+            if (Next.PossibleDeadLockUsingAwaiter())
             {
-                return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
-            }).GetAwaiter().GetResult();
-        }
+                resultNextStrings = Task.Run(() =>
+                {
+                    return (Next).MainAsync().GetAwaiter().GetResult();
+                }).GetAwaiter();
+            }
+            else
+            {
+                resultNextStrings = Next.MainAsync().GetAwaiter().GetResult();
+            }
 
-      
+            var currentResult = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            return currentResult + resultNextStrings;
+        }
 
         public override string PreDescription()
         {
@@ -60,49 +48,65 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PostDescription()
         {
-            return "";
+            return "Next";
         }
 
-        public override bool HaveToWaitPost()
-        {
-            return false;
-        }
-
-        public override bool IsCompleted()
-        {
-            return true;
-        }
-
-        public override void Post()
-        {
-
-        }
-
-       
-
+        /*
+       public override void Pre()
+       {
+           Result = Task.Run(() =>
+           {
+               return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
+           }).GetAwaiter().GetResult();
+       }
+       */
     }
 
-    public class CallNextSyncWaitAfterIfNextMethodIsAsync : CallNextSync
+    public class CallNextSyncWaitAfterIfNextMethodIsAsync : MethodSyncWithNext
     {
-        TaskAwaiter<string> TaskWaiter;
+        public new IGetStringAsync Next { get { return (IGetStringAsync)base.Next; } }
 
-        public CallNextSyncWaitAfterIfNextMethodIsAsync(IGetStringAsync pNext)
-              : base(pNext)
+        public CallNextSyncWaitAfterIfNextMethodIsAsync(IMyWorkSync pMyWork, IGetStringAsync pNext, IGenerateSerie gen, IUseMethod pMethod)
+           : base(pMyWork, pNext, gen, pMethod)
         {
         }
 
-        public override void Pre()
+        public override string Main()
         {
-             TaskWaiter = Task.Run(() =>
-            {
-                return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
-            }).GetAwaiter();
+            var nameReflection = GenerateHeaderAndFoot(MethodBase.GetCurrentMethod(), Thread.CurrentThread.ManagedThreadId);
 
+            dynamic resultNextStrings = null;
+
+            if (Next.PossibleDeadLockUsingAwaiter())
+            {
+                resultNextStrings = Task.Run(() =>
+                {
+                    return Next.MainAsync().GetAwaiter().GetResult();
+                }).GetAwaiter();
+            }
+            else
+            {
+                resultNextStrings = Next.MainAsync().GetAwaiter();
+            }
+
+            var currentResult = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            return currentResult + resultNextStrings.GetResult();
         }
 
         public override string PreDescription()
         {
-            return "Next.MainAsync().GetAwaiter()";
+            if (Next.PossibleDeadLockUsingAwaiter())
+            {
+                return "Next.MainAsync().GetAwaiter()";
+            }
+            else
+            {
+                return "Task.Run(() => { return Next.MainAsync().GetAwaiter().GetResult(); }).GetAwaiter(); ";
+            }
         }
 
         public override string PostDescription()
@@ -110,34 +114,16 @@ namespace HowToWorkAsync.ImpDynamic
             return "Next.GetResult()";
         }
 
-        public override bool HaveToWaitPost()
-        {
-            return true;
-        }
-
-        public override bool IsCompleted()
-        {
-            return TaskWaiter.IsCompleted;
-        }
-
-        public override void Post()
-        {
-            Result = TaskWaiter.GetResult();
-        }
     }
 
-    public class CallNextSyncIfNextMethodIsSync : CallNextSync
+    public class CallNextSyncIfNextMethodIsSync : MethodSyncWithNext
     {
-        public CallNextSyncIfNextMethodIsSync(IGetString pNext)
-              : base(pNext)
+        public new IGetString Next { get { return (IGetString)base.Next; } }
+
+        public CallNextSyncIfNextMethodIsSync(IMyWorkSync pMyWork, IGetString pNext, IGenerateSerie gen, IUseMethod pMethod)
+           : base(pMyWork, pNext, gen, pMethod)
         {
         }
-
-        public override void Pre()
-        {
-            Result = ((IGetString)Next).Main();
-        }
-
 
         public override string PreDescription()
         {
@@ -146,23 +132,23 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PostDescription()
         {
-            return "";
+            return "Next";
         }
 
-        public override bool HaveToWaitPost()
+        public override string Main()
         {
-            return true;
+            var nameReflection = GenerateHeaderAndFoot(MethodBase.GetCurrentMethod(), Thread.CurrentThread.ManagedThreadId);
+
+            var resultNextStrings = Next.Main();
+
+            var currentResult = MyWork.GetString(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
+
+            GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
+            return currentResult + resultNextStrings;
         }
 
-        public override bool IsCompleted()
-        {
-            return true;
-        }
-
-        public override void Post()
-        {
-          
-        }
     }
 
 }
