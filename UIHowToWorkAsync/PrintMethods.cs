@@ -69,19 +69,25 @@ namespace UIHowToWorkAsync
             }
             todo = parameter.Implementation.DoIndependetWork.Description();
 
+            var todoStrategy = parameter.Implementation.DoIndependetWork.StrategyTodo?.Description();
+            
 
             if (parameter.Next != null)
             {
                 nextImp = nextImp.Replace("Next", parameter.Next.IdMethod);
                 callNext = @"VAR X" + parameter.Level + " = " + nextImp;
                 Print(parameter.Next);
-                Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
+                var indpenWork = Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
+                indpenWork = Write(indpenWork, "DoIndependentWork()", color);
+                Write(indpenWork, todoStrategy, color);
                 getNextSting = getNextSting.Replace("Next", "X" + parameter.Level);
                 Write(current2, @"Return" + " Y" + parameter.Level + " + " + getNextSting, color);
             }
             else
             {
-                Write(current2, @"Return " + todo, color);
+                var indpenWork = Write(current2, @"Return " + todo, color);
+                indpenWork = Write(indpenWork, "DoIndependentWork()", color);
+                Write(indpenWork, todoStrategy, color);
             }
         }
 

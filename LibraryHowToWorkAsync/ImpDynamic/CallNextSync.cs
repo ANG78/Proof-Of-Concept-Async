@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +25,7 @@ namespace HowToWorkAsync.ImpDynamic
                 resultNextStrings = Task.Run(() =>
                 {
                     return (Next).MainAsync().GetAwaiter().GetResult();
-                }).GetAwaiter();
+                }).GetAwaiter().GetResult();
             }
             else
             {
@@ -43,7 +42,14 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override string PreDescription()
         {
-            return "Next.MainAsync().GetAwaiter().GetResult()";
+            if (Next.PossibleDeadLockUsingAwaiter())
+            {
+                return "Task.Run(() => { return Next.MainAsync().GetAwaiter().GetResult(); }).GetAwaiter().GetResult(); ";                
+            }
+            else
+            {
+                return "Next.MainAsync().GetAwaiter().GetResult()";
+            }
         }
 
         public override string PostDescription()
@@ -51,15 +57,6 @@ namespace HowToWorkAsync.ImpDynamic
             return "Next";
         }
 
-        /*
-       public override void Pre()
-       {
-           Result = Task.Run(() =>
-           {
-               return ((IGetStringAsync)Next).MainAsync().GetAwaiter().GetResult();
-           }).GetAwaiter().GetResult();
-       }
-       */
     }
 
     public class CallNextSyncWaitAfterIfNextMethodIsAsync : MethodSyncWithNext
@@ -101,11 +98,11 @@ namespace HowToWorkAsync.ImpDynamic
         {
             if (Next.PossibleDeadLockUsingAwaiter())
             {
-                return "Next.MainAsync().GetAwaiter()";
+                return "Task.Run(() => { return Next.MainAsync().GetAwaiter().GetResult(); }).GetAwaiter(); ";
             }
             else
             {
-                return "Task.Run(() => { return Next.MainAsync().GetAwaiter().GetResult(); }).GetAwaiter(); ";
+                return "Next.MainAsync().GetAwaiter()";
             }
         }
 

@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.PTop = new System.Windows.Forms.Panel();
             this.cmbTipoGrafica = new System.Windows.Forms.ComboBox();
@@ -43,6 +43,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.grafica = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.options = new System.Windows.Forms.GroupBox();
+            this.chkLostPoints = new System.Windows.Forms.CheckBox();
             this.chkStartEnd = new System.Windows.Forms.CheckBox();
             this.bttPrint = new System.Windows.Forms.Button();
             this.lblLevels = new System.Windows.Forms.Label();
@@ -54,7 +55,6 @@
             this.panelMethodsFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.PLeftMain = new System.Windows.Forms.Panel();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.chkLostPoints = new System.Windows.Forms.CheckBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).BeginInit();
             this.options.SuspendLayout();
@@ -70,18 +70,18 @@
             this.splitterLeft.Cursor = System.Windows.Forms.Cursors.VSplit;
             this.splitterLeft.Location = new System.Drawing.Point(380, 0);
             this.splitterLeft.Name = "splitterLeft";
-            this.splitterLeft.Size = new System.Drawing.Size(5, 581);
+            this.splitterLeft.Size = new System.Drawing.Size(10, 581);
             this.splitterLeft.TabIndex = 1;
             this.splitterLeft.TabStop = false;
             // 
             // PTop
             // 
             this.PTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PTop.Location = new System.Drawing.Point(385, 0);
+            this.PTop.Location = new System.Drawing.Point(390, 0);
             this.PTop.Margin = new System.Windows.Forms.Padding(0);
             this.PTop.MinimumSize = new System.Drawing.Size(0, 5);
             this.PTop.Name = "PTop";
-            this.PTop.Size = new System.Drawing.Size(692, 10);
+            this.PTop.Size = new System.Drawing.Size(687, 10);
             this.PTop.TabIndex = 2;
             // 
             // cmbTipoGrafica
@@ -159,9 +159,9 @@
             this.splitterTop.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.splitterTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitterTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitterTop.Location = new System.Drawing.Point(385, 10);
+            this.splitterTop.Location = new System.Drawing.Point(390, 10);
             this.splitterTop.Name = "splitterTop";
-            this.splitterTop.Size = new System.Drawing.Size(692, 5);
+            this.splitterTop.Size = new System.Drawing.Size(687, 5);
             this.splitterTop.TabIndex = 3;
             this.splitterTop.TabStop = false;
             // 
@@ -170,26 +170,26 @@
             this.panel3.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panel3.Controls.Add(this.grafica);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(385, 15);
+            this.panel3.Location = new System.Drawing.Point(390, 15);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(692, 566);
+            this.panel3.Size = new System.Drawing.Size(687, 566);
             this.panel3.TabIndex = 4;
             // 
             // grafica
             // 
             this.grafica.BorderlineWidth = 5;
-            chartArea8.Name = "ChartArea1";
-            this.grafica.ChartAreas.Add(chartArea8);
+            chartArea1.Name = "ChartArea1";
+            this.grafica.ChartAreas.Add(chartArea1);
             this.grafica.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend8.Name = "Legend1";
-            this.grafica.Legends.Add(legend8);
+            legend1.Name = "Legend1";
+            this.grafica.Legends.Add(legend1);
             this.grafica.Location = new System.Drawing.Point(0, 0);
             this.grafica.Name = "grafica";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Series1";
-            this.grafica.Series.Add(series8);
-            this.grafica.Size = new System.Drawing.Size(692, 566);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.grafica.Series.Add(series1);
+            this.grafica.Size = new System.Drawing.Size(687, 566);
             this.grafica.TabIndex = 0;
             this.grafica.Text = "chart1";
             // 
@@ -216,6 +216,19 @@
             this.options.TabIndex = 44;
             this.options.TabStop = false;
             this.options.Enter += new System.EventHandler(this.options_Enter);
+            // 
+            // chkLostPoints
+            // 
+            this.chkLostPoints.AutoSize = true;
+            this.chkLostPoints.Checked = true;
+            this.chkLostPoints.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLostPoints.Location = new System.Drawing.Point(106, 68);
+            this.chkLostPoints.Name = "chkLostPoints";
+            this.chkLostPoints.Size = new System.Drawing.Size(83, 17);
+            this.chkLostPoints.TabIndex = 47;
+            this.chkLostPoints.Text = "Display Lost";
+            this.chkLostPoints.UseVisualStyleBackColor = true;
+            this.chkLostPoints.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
             // 
             // chkStartEnd
             // 
@@ -304,29 +317,33 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panelMethods.AutoScroll = true;
             this.panelMethods.AutoSize = true;
-            this.panelMethods.BackColor = System.Drawing.Color.Transparent;
+            this.panelMethods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelMethods.BackColor = System.Drawing.Color.Gray;
             this.panelMethods.Controls.Add(this.panelMethodsFlow);
             this.panelMethods.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.panelMethods.Location = new System.Drawing.Point(3, 119);
             this.panelMethods.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
+            this.panelMethods.MaximumSize = new System.Drawing.Size(0, 800);
             this.panelMethods.Name = "panelMethods";
             this.panelMethods.Padding = new System.Windows.Forms.Padding(1);
-            this.panelMethods.Size = new System.Drawing.Size(331, 431);
+            this.panelMethods.Size = new System.Drawing.Size(5, 5);
             this.panelMethods.TabIndex = 43;
             // 
             // panelMethodsFlow
             // 
             this.panelMethodsFlow.AutoSize = true;
             this.panelMethodsFlow.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelMethodsFlow.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.panelMethodsFlow.BackColor = System.Drawing.SystemColors.Control;
             this.panelMethodsFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.panelMethodsFlow.Location = new System.Drawing.Point(1, 1);
             this.panelMethodsFlow.Name = "panelMethodsFlow";
             this.panelMethodsFlow.Size = new System.Drawing.Size(0, 0);
             this.panelMethodsFlow.TabIndex = 35;
+            this.panelMethodsFlow.WrapContents = false;
             // 
             // PLeftMain
             // 
+            this.PLeftMain.AutoScroll = true;
             this.PLeftMain.BackColor = System.Drawing.SystemColors.Control;
             this.PLeftMain.Controls.Add(this.splitter1);
             this.PLeftMain.Controls.Add(this.PLeft_TOP);
@@ -347,19 +364,6 @@
             this.splitter1.TabIndex = 47;
             this.splitter1.TabStop = false;
             // 
-            // chkLostPoints
-            // 
-            this.chkLostPoints.AutoSize = true;
-            this.chkLostPoints.Checked = true;
-            this.chkLostPoints.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkLostPoints.Location = new System.Drawing.Point(106, 68);
-            this.chkLostPoints.Name = "chkLostPoints";
-            this.chkLostPoints.Size = new System.Drawing.Size(83, 17);
-            this.chkLostPoints.TabIndex = 47;
-            this.chkLostPoints.Text = "Display Lost";
-            this.chkLostPoints.UseVisualStyleBackColor = true;
-            this.chkLostPoints.CheckedChanged += new System.EventHandler(this.chkTiempoTicks_CheckedChanged);
-            // 
             // FormAsync
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,6 +375,7 @@
             this.Controls.Add(this.splitterLeft);
             this.Controls.Add(this.PLeftMain);
             this.Name = "FormAsync";
+            this.Load += new System.EventHandler(this.FormAsync_Load);
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).EndInit();
             this.options.ResumeLayout(false);

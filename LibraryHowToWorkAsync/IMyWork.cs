@@ -5,6 +5,7 @@ namespace HowToWorkAsync
     public interface IMyWork
     {
         string Description();
+        IStrategyTodo StrategyTodo { get; }
     }
 
     public interface IMyWorkSync : IMyWork

@@ -11,11 +11,11 @@
 
             IGetBase result = null;
             var lastClass = GetInstance(method.Next, reporter);
-            if (method.TypeNextImpl == ETypeImpl.ASYNC)
+            if (method.TypeImpl == ETypeImpl.ASYNC)
             {
                 result =  GetInstanceAsync(method, reporter, lastClass);
             }
-            else if (method.TypeNextImpl == ETypeImpl.SYNC)
+            else if (method.TypeImpl == ETypeImpl.SYNC)
             {
                 result = GetInstanceNoAsync(method, reporter, lastClass);
             }
@@ -30,9 +30,9 @@
             if (method == null)
                 return null;
 
-            var processing = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+            var processing = StrategyTodoFactory.GetInstance(method.TypeDoIndependentWork, reporter, method.NumSteps);
 
-            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeDoIndependentWork, reporter, method.NumSteps);
 
             MyWorkSync myW = new MyWorkSync(todo, reporter);
 
@@ -77,21 +77,21 @@
             if (method == null)
                 return null;
 
-            var processing = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+            var processing = StrategyTodoFactory.GetInstance(method.TypeDoIndependentWork, reporter, method.NumSteps);
 
 
-            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeWork, reporter, method.NumSteps);
+            IStrategyTodo todo = StrategyTodoFactory.GetInstance(method.TypeDoIndependentWork, reporter, method.NumSteps);
 
             MyWorkAsync myW = null;
-            switch (method.MyImpl)
+            switch (method.StrategyDoIndependentWork)
             {
-                case EMyTypeImpl.ASYNC:
+                case EStrategyDoIndependentWork.WRAPPER_ASYNC:
                     myW = new MyWorkAsyncWait(todo, reporter);
                     break;
-                case EMyTypeImpl.AWAITER:
+                case EStrategyDoIndependentWork.WRAPPER_ASYNC_AWAITER:
                     myW = new MyWorkAsyncAwaiter(todo, reporter);
                     break;
-                case EMyTypeImpl.SYNC:
+                case EStrategyDoIndependentWork.NORMAL:
                     myW = new MyWorkAsyncNotWait(todo, reporter);
                     break;
             }
@@ -125,7 +125,7 @@
                 }
                 else
                 {
-                    result = new CallNextAsyncToAsync(myW, (IGetString)lastClass, reporter, method);
+                    result = new CallNextAsyncToSync(myW, (IGetString)lastClass, reporter, method);
                 }
                 return result;
             }

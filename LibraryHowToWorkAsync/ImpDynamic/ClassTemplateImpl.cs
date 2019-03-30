@@ -9,6 +9,7 @@ namespace HowToWorkAsync.ImpDynamic
         
         protected IGenerateSerie generator { get; set; }
         public uint Level { get; set; }
+        protected abstract string IdSerie { get; }
 
         public ClassBaseImpl(IGenerateSerie gen)
         {
@@ -26,17 +27,17 @@ namespace HowToWorkAsync.ImpDynamic
         {
             if (nameMetodo.Name.Contains("MoveNext"))
             {
-                return "0" + Level + nameMetodo.DeclaringType.Name.Substring(0, nameMetodo.DeclaringType.Name.IndexOf(">")).Replace("<", "");
+                return "0" + Level + nameMetodo.DeclaringType.Name.Substring(0, nameMetodo.DeclaringType.Name.IndexOf(">")).Replace("<", "") + " " + IdSerie;
             }
             else
             {
-                return "0" + Level + nameMetodo.Name;
+                return "0" + Level + nameMetodo.Name + " " + IdSerie;
             }
         }
 
         public void GenerateHeaderAndFoot(string literal, int idThread)
         {
-            generator.FillingOutTheReport(ETypePoint.STAR_END, "0" + literal +  " STAR/END", (int)Level, idThread);
+            generator.FillingOutTheReport(ETypePoint.START_END, "0" + literal +  " S/E", (int)Level, idThread);
         }
 
         public void GenerateLostPoint(string literal, int idThread)
@@ -60,6 +61,7 @@ namespace HowToWorkAsync.ImpDynamic
     public abstract class ClassTemplateImpl : ClassBaseImpl
     {
         protected IUseMethod Method;
+        private string idSerie;
 
         public ClassTemplateImpl(IGenerateSerie gen, IUseMethod pMethod)
             : base(gen)
@@ -67,7 +69,10 @@ namespace HowToWorkAsync.ImpDynamic
             Method = pMethod;
             Level = (uint)pMethod.Level;
             pMethod.Implementation = (IGetBase)this;
+            idSerie = Method.IdMethod;
         }
+
+        protected override string IdSerie { get { return idSerie;} }
         
        
     }

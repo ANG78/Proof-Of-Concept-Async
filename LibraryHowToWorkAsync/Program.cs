@@ -19,7 +19,7 @@ namespace HowToWorkAsync
         public async Task<Report> Run()
         {
             DateTime inicia = DateTime.Now;
-            _generaSerie.FillingOutTheReport(ETypePoint.STAR_END, "0000" + "-RUN-", -1, Thread.CurrentThread.ManagedThreadId,false);
+            _generaSerie.FillingOutTheReport(ETypePoint.START_END, "0000" + "-RUN-", -1, Thread.CurrentThread.ManagedThreadId,false);
 
             string result = "";
             if (_implementacion is IGetString)
@@ -31,7 +31,7 @@ namespace HowToWorkAsync
                 result = await ((IGetStringAsync)_implementacion).MainAsync();
             }
 
-            _generaSerie.FillingOutTheReport(ETypePoint.STAR_END,"0000" + "-RUN-", -1, Thread.CurrentThread.ManagedThreadId, false);
+            _generaSerie.FillingOutTheReport(ETypePoint.START_END,"0000" + "-RUN-", -1, Thread.CurrentThread.ManagedThreadId, false);
 
             var res = _generaSerie.GenateReport();
             res.Results = result;

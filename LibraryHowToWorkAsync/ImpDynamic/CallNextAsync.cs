@@ -40,7 +40,7 @@ namespace HowToWorkAsync.ImpDynamic
             {
                 currentResult = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
-
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + await resultNextStrings;
         }
@@ -81,6 +81,7 @@ namespace HowToWorkAsync.ImpDynamic
             {
                 currentResult = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + resultNextStrings;
@@ -122,6 +123,7 @@ namespace HowToWorkAsync.ImpDynamic
             {
                 currentResult = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + resultNextStrings;
@@ -175,6 +177,7 @@ namespace HowToWorkAsync.ImpDynamic
             {
                 currentResult = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + resultNextStrings.GetResult();
@@ -200,15 +203,17 @@ namespace HowToWorkAsync.ImpDynamic
         }
     }
 
-    public class CallNextAsyncToAsync : CallNextAsync
+    public class CallNextAsyncToSync : MethodAsyncWithNext
     {
-        public new IGetString Next { get; set; }
-
-
-        public CallNextAsyncToAsync(IMyWorkASync pMyWork, IGetString pNext, IGenerateSerie gen, IUseMethod pMethod)
-            : base(pMyWork, null, gen, pMethod)
+        public new IGetString Next
         {
-            Next = pNext;
+            get { return (IGetString)base.Next; }
+        }
+
+
+        public CallNextAsyncToSync(IMyWorkASync pMyWork, IGetString pNext, IGenerateSerie gen, IUseMethod pMethod)
+            : base(pMyWork, pNext, gen, pMethod)
+        {
         }
 
         public override async Task<string> MainAsync()
@@ -226,6 +231,7 @@ namespace HowToWorkAsync.ImpDynamic
             {
                 currentResult = MyWork.GetStringAsync(nameReflection, Thread.CurrentThread.ManagedThreadId).Result;
             }
+            GenerateLostPoint(nameReflection, Thread.CurrentThread.ManagedThreadId);
 
             GenerateHeaderAndFoot(nameReflection, Thread.CurrentThread.ManagedThreadId);
             return currentResult + resultNextStrings;

@@ -8,7 +8,7 @@ namespace HowToWorkAsync
     {
         TODO,
         LOST,
-        STAR_END
+        START_END
     }
 
 

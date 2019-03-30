@@ -88,7 +88,7 @@ namespace HowToWorkAsync.Process
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
-                if (!chkStartAndEnd  && serieExtraida.Points.Any(x => x.Type == ETypePoint.STAR_END))
+                if (!chkStartAndEnd  && serieExtraida.Points.Any(x => x.Type == ETypePoint.START_END))
                 {
                     continue;
                 }
