@@ -2,12 +2,40 @@
 
 Basado en el artículo relativo a Asyn/Await de microsoft (https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/ ) uno encuentra este esquema en el mismo, donde se ilustra cómo funciona.
 
-![alt text](msdnAsyncpicture.png)
+![alt text](img/msdnAsyncpicture.png)
 
 
 Siguiendo ese esquema, me surgió la curiosidad profesional de saber cómo es su performance.
 
-La idea era definir una cascada de llamadas entre métodos que van a componer una cadena como resultado. de la conctenación de la invocación de su siguiente y la generada en el mismo método.
+La idea era definir una cascada de llamadas entre métodos que van a componer una cadena (string) como resultado de la conctenación de la generada por su siguiente y la generada en el propio método.
+
+
+![alt text](img/callStackMethods.png)
+
+
+En el ejemplo de Microsoft, se ejecutaba en paralelo un trabajo al tiempo que se invoca previamente a la carga de un de la página "http://.../..."
+
+
+En la prueba de conceptos, se invocará a un siguiente método para obtener su resultado y por otro lado, generará la suya propia para luego concatenarla y devolverla al invocante.
+
+
+## Cómo genera su propio resultado un método 
+
+Para obtener el resultado del propio método, vamos a poder definir el cómo:
+
+1) Numero de Steps o milisegudos
+2) Estrategia Looping o Sleeping
+  
+  La estrategia Looping es una iteracion de N-Steps en las que se generará un Punto en cada uno  de ellas con un descanso de 5 mls.
+
+  La estrategia Sleeping genera dos puntos. Uno al comienzo y el otro despues del intervalo de tiempo definido por el usuario.
+
+La idea, es simular una carga de trabajo en cada método, para ver como afecta a la ejecución entre ambos hilos.
+
+
+nota: También se ha visto interesante ver como impacta la ejecución (sync/await) de este tarea independiente sobre su proceso padre.
+
+## interfaces
 
 Las interfaces son las siguientes que se muestran en la siguiente figura.
 
@@ -17,8 +45,9 @@ Las interfaces son las siguientes que se muestran en la siguiente figura.
 Entonces en dicha cascada nos encontraremos varias combinaciones de implementaciones de estas interfaces, resultando que:
 
 * Metodos Async llamaran a un metodo Sync
-  * Con Warnings dados por Visual Studio
+  * Con Warnings dados por Visual Studio avisando que se ejecutarán de manera sync
   * Sin Warnings
+
 * Metodos Sync llamaran a un metodo Async
 
 nota: de aqui surgió la necesidad de simular casos como... ¿Que pasaría si el metodo invocado termina antes que el invocado en un escenario de cascadas de llamadas async? 
@@ -36,7 +65,7 @@ Focalizándonos en las clases abstractas, tendremos que:
 
 En la siguiente captura, se tendrá una idea de como se podría definir los escenarios en el panel de la izquierda.
 
-![alt text](capture1.png)
+![alt text](img/capture1.png)
 
 En la parte derecha se tiene una representación gráfica del resultado generado en dicho escenario
 

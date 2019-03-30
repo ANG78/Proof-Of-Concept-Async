@@ -3,20 +3,17 @@ using System.Threading;
 
 namespace HowToWorkAsync
 {
-
-   
-
     public class StrategyTodoFactory
     {
-        public static IStrategyTodo GetInstance(ETypeWork tipo, IGenerateSerie generaSerie, int iteracionesOSegundos)
+        public static IStrategyTodo GetInstance(ETypeDoIndependentWork tipo, IGenerateSerie generaSerie, int iteracionesOSegundos)
         {
-            if (tipo == ETypeWork.LOOPING)
+            if (tipo == ETypeDoIndependentWork.LOOPING)
             {
                 return new Looping(generaSerie, iteracionesOSegundos);
             }
-            else if (tipo == ETypeWork.SLEEPING)
+            else if (tipo == ETypeDoIndependentWork.SLEEPING)
             {
-                return new UseSleeping(generaSerie, iteracionesOSegundos);
+                return new Sleeping(generaSerie, iteracionesOSegundos);
             }
             throw new Exception("Not Expected TODO Strategy");
         }
@@ -55,20 +52,26 @@ namespace HowToWorkAsync
                 
                 Thread.Sleep(5);
             }
-            return cadena1;
+            return cadena1.Replace("Async","");
         }
+
         public int AmountOfStepsOrMls()
         {
             return _count;
         }
+
+        public string Description()
+        {
+            return "string res='' ; for (int i = 1; i <=  " + _count + "; i++) { res = FillingOutTheReport(idSerie, i, ThreadId); sleep(5);";
+        }
     }
 
-    public class UseSleeping : IStrategyTodo
+    public class Sleeping : IStrategyTodo
     {
         protected readonly IGenerateSerie _generaSerie;
         protected readonly int _count;
 
-        public UseSleeping(IGenerateSerie gen, int count)
+        public Sleeping(IGenerateSerie gen, int count)
         {
             _generaSerie = gen;
             _count = count;
@@ -77,9 +80,14 @@ namespace HowToWorkAsync
         public string Todo(string idSerie, int idThread)
         {
             _generaSerie.FillingOutTheReport(ETypePoint.TODO, idSerie, _count, idThread, true);
-            Console.Write("sleeping thread.." + ETypeWork.SLEEPING.Factor() * _count + "mls ");
-            Thread.Sleep(ETypeWork.SLEEPING.Factor() * _count);
-            return _generaSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, _count, idThread, true);
+            Console.Write("sleeping thread.." + ETypeDoIndependentWork.SLEEPING.Factor() * _count + "mls ");
+            Thread.Sleep(ETypeDoIndependentWork.SLEEPING.Factor() * _count);
+            return _generaSerie.FillingOutTheReport(ETypePoint.TODO,idSerie, _count, idThread, true).Replace("Async", ""); ;
+        }
+
+        public string Description()
+        {
+            return " FillingOutTheReport(idSerie, i, ThreadId); sleep(" + (ETypeDoIndependentWork.SLEEPING.Factor() * _count) + "); FillingOutTheReport(idSerie, i, ThreadId);";
         }
 
         public bool IsTime()

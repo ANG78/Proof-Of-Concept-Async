@@ -5,7 +5,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HowToWorkAsync.Process
 {
-    public class StrategyPintar : IStrategyProcessReport
+    public class StrategyPintar : IProcessReportStrategy
     {
         readonly Chart chart;
         readonly bool chkOrder;
@@ -88,7 +88,7 @@ namespace HowToWorkAsync.Process
             string tiemposExtraidos = "";
             foreach (var serieExtraida in listadorSeries)
             {
-                if (!chkStartAndEnd  && serieExtraida.Points.Any(x => x.Type == ETypePoint.STAR_END))
+                if (!chkStartAndEnd  && serieExtraida.Points.Any(x => x.Type == ETypePoint.START_END))
                 {
                     continue;
                 }

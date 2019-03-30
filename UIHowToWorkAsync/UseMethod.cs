@@ -14,28 +14,28 @@ namespace UIHowToWorkAsync
         {
             InitializeComponent();
 
-            foreach (var aux in Enum.GetValues(typeof(EMyTypeImpl)))
+            foreach (var aux in Enum.GetValues(typeof(EStrategyDoIndependentWork)))
             {
                 cmbMyImpl.Items.Add(aux);
             }
 
-            foreach (var aux in Enum.GetValues(typeof(ETypeWork)))
+            foreach (var aux in Enum.GetValues(typeof(ETypeDoIndependentWork)))
             {
                 cmb.Items.Add(aux);
             }
 
             foreach (var aux in Enum.GetValues(typeof(ETypeImpl)))
             {
-                cmbNextImpl.Items.Add(aux);
+                cmbImpl.Items.Add(aux);
             }
 
             SetValuesCall();
 
             SetLabelUnit();
 
-            EventChangeTheLastMethod += EventNextNullHandler;
+            StrategyDoIndependentWork = EStrategyDoIndependentWork.NORMAL;
 
-            MyImpl = EMyTypeImpl.SYNC;
+            EventChange += EventNextHandler;
 
         }
 
@@ -65,24 +65,22 @@ namespace UIHowToWorkAsync
 
         private void cmbImplementation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EventChange?.Invoke((ETypeImpl)cmbNextImpl.SelectedIndex);
-            EventChangeTheLastMethod?.Invoke((ETypeImpl)cmbNextImpl.SelectedIndex);
+            EventChange?.Invoke((ETypeImpl)cmbImpl.SelectedIndex);
+            NextEventChange?.Invoke((ETypeImpl)cmbImpl.SelectedIndex);
         }
 
         private void groupBoxMethod_Enter(object sender, EventArgs e)
         {
-
         }
 
 
 
 
-        public ETypeWork TypeWork
+        public ETypeDoIndependentWork TypeDoIndependentWork
         {
             get
             {
-
-                return HelperUI.GetMethod(cmb, () => { return (ETypeWork)cmb.SelectedIndex; });
+                return HelperUI.GetMethod(cmb, () => { return (ETypeDoIndependentWork)cmb.SelectedIndex; });
             }
             set
             {
@@ -107,43 +105,80 @@ namespace UIHowToWorkAsync
         {
             HelperUI.ModifyMethod(cmbNextAlg, () =>
             {
-
-                var newValues = newType.HowToBeCalled();
-
-                var t2 = cmbNextAlg.SelectedItem;
-                cmbNextAlg.Items.Clear();
-                foreach (var aux in newValues)
+                if (Next != null)
                 {
-                    cmbNextAlg.Items.Add(aux);
-                }
+                    /*cmbNextAlg*/
+                    var newValues = newType.HowToCallTheNextOne(next.TypeImpl);
+                    var current = cmbNextAlg.SelectedItem;
+                    cmbNextAlg.Items.Clear();
+                    foreach (var aux in newValues)
+                    {
+                        cmbNextAlg.Items.Add(aux);
+                    }
 
-                if (t2 != null && cmbNextAlg.Items.Contains(t2))
-                {
-                    cmbNextAlg.SelectedItem = t2;
+                    if (current != null && cmbNextAlg.Items.Contains(current))
+                    {
+                        cmbNextAlg.SelectedItem = current;
+                    }
+
+                    if (cmbNextAlg.SelectedItem == null && newValues.Count == 1)
+                    {
+                        cmbNextAlg.SelectedItem = newValues[0];
+                    }
                 }
             });
 
+            HelperUI.ModifyMethod(cmbMyImpl, () =>
+            {
+                /*cmbImpl*/
+                var newValuesToBeImplemented = newType.DoMyWork();
+                var currentImplementation = cmbMyImpl.SelectedItem;
+                cmbMyImpl.Items.Clear();
+                foreach (var aux in newValuesToBeImplemented)
+                {
+                    cmbMyImpl.Items.Add(aux);
+                }
+
+
+                if (currentImplementation != null && cmbMyImpl.Items.Contains(currentImplementation))
+                {
+                    cmbMyImpl.SelectedItem = currentImplementation;
+                }
+
+                if (cmbMyImpl.SelectedItem == null && newValuesToBeImplemented.Count == 1)
+                {
+                    cmbMyImpl.SelectedItem = newValuesToBeImplemented[0];
+                }
+            });
         }
 
-        private void EventNextNullHandler(ETypeImpl newType)
+        private void NextEventChangeHandler(ETypeImpl newType)
         {
             HelperUI.ModifyMethod(cmbNextAlg, () =>
             {
-
-                var newValues = newType.HowToBeCalled();
-
-                var t2 = cmbNextAlg.SelectedItem;
-                cmbNextAlg.Items.Clear();
-                foreach (var aux in newValues)
+                if (Next != null)
                 {
-                    cmbNextAlg.Items.Add(aux);
-                }
+                    var newValues = newType.HowToCallTheNextOne(Next.TypeImpl);
 
-                if (t2 != null && cmbNextAlg.Items.Contains(t2))
-                {
-                    cmbNextAlg.SelectedItem = t2;
+                    var current = cmbNextAlg.SelectedItem;
+                    cmbNextAlg.Items.Clear();
+                    foreach (var aux in newValues)
+                    {
+                        cmbNextAlg.Items.Add(aux);
+                    }
+
+                    if (current != null && cmbNextAlg.Items.Contains(current))
+                    {
+                        cmbNextAlg.SelectedItem = current;
+                    }
+
+                    if (cmbNextAlg.SelectedItem == null && newValues.Count == 1)
+                    {
+                        cmbNextAlg.SelectedItem = newValues[0];
+                    }
                 }
             });
+
 
         }
 
@@ -161,22 +196,24 @@ namespace UIHowToWorkAsync
                 next = value;
                 if (next != null)
                 {
-                    EventChangeTheLastMethod += null;
-                    next.EventChange += EventNextHandler;
-                }
-                else
-                {
-                    HelperUI.ModifyMethod(this, () =>
-                        {
-                            EventChangeTheLastMethod += EventNextNullHandler;
-                        });
-
+                    next.EventChange += NextEventChangeHandler;
                 }
 
-                HelperUI.ModifyMethod(cmbNextImpl, () =>
+                HelperUI.ModifyMethod(cmbImpl, () =>
                 {
-                    cmbNextImpl.Visible = (next != null);
                     cmbNextAlg.Visible = (next != null);
+                    gbNextCall.Visible = (next != null);
+                    if (next != null)
+                    {
+                        groupBoxMethod.Height = 125;
+                        lblNext.Text = "Call to " + next.IdMethod;
+                    }
+                    else
+                    {
+                        groupBoxMethod.Height = 85;
+                    }
+
+
                 });
             }
         }
@@ -188,7 +225,7 @@ namespace UIHowToWorkAsync
             set
             {
                 level = value;
-                HelperUI.ModifyMethod(cmbNextAlg, () => { this.groupBoxMethod.Text = "Method" + level; });
+                HelperUI.ModifyMethod(cmbNextAlg, () => { this.lbName.Text = "Method" + level; });
             }
         }
 
@@ -200,21 +237,21 @@ namespace UIHowToWorkAsync
         }
 
 
-        public EMyTypeImpl MyImpl
+        public EStrategyDoIndependentWork StrategyDoIndependentWork
         {
-            get => HelperUI.GetMethod(cmbNextAlg, () => { return (EMyTypeImpl)cmbMyImpl.SelectedIndex; });
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (EStrategyDoIndependentWork)cmbMyImpl.SelectedIndex; });
             set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbMyImpl.SelectedIndex = (int)value; });
         }
 
-        public ETypeImpl TypeNextImpl
+        public ETypeImpl TypeImpl
         {
-            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbNextImpl.SelectedIndex; });
-            set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbNextImpl.SelectedIndex = (int)value; });
+            get => HelperUI.GetMethod(cmbNextAlg, () => { return (ETypeImpl)cmbImpl.SelectedIndex; });
+            set => HelperUI.ModifyMethod(cmbNextAlg, () => { cmbImpl.SelectedIndex = (int)value; });
         }
         public EventNextMethodWasChanged EventChange { get; set; }
-        public EventNextMethodWasChanged EventChangeTheLastMethod { get; set; }
+        public EventNextMethodWasChanged NextEventChange { get; set; }
 
-        public string IdMethod => HelperUI.GetMethod(groupBoxMethod, () => { return (string)groupBoxMethod.Text; });
+        public string IdMethod => HelperUI.GetMethod(lbName, () => { return (string)lbName.Text; });
 
         public IGetBase Implementation { get; set; }
 
@@ -223,7 +260,7 @@ namespace UIHowToWorkAsync
         {
             HelperUI.ModifyMethod(lblTrack, () =>
             {
-                var selected = (ETypeWork)cmb.SelectedIndex;
+                var selected = (ETypeDoIndependentWork)cmb.SelectedIndex;
                 lblTrack.Text = this.trackMethod.Value * selected.Factor() + " " + selected.Unit();
             });
         }
@@ -264,6 +301,11 @@ namespace UIHowToWorkAsync
         }
 
         private void cmbMyImpl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }

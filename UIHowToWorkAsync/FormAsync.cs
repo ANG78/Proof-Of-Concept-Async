@@ -13,12 +13,13 @@ namespace UIHowToWorkAsync
     {
         Report informe;
         UseMethod Method = null;
-        private ETypeWork DefaultETypeWork = ETypeWork.LOOPING;
+        private ETypeDoIndependentWork DefaultETypeWork = ETypeDoIndependentWork.LOOPING;
         private ECallNext DefaultECallNext = ECallNext.WAIT_AFTER;
         private int DefaulttrackMethod = 25;
         private ETypeImpl DefaultETypeImplementation = ETypeImpl.ASYNC;
-        private int MaxMethods = 6;
-        private int DefaultNumLevel = 4;
+        private EStrategyDoIndependentWork DefaultDoIndependentWork = EStrategyDoIndependentWork.WRAPPER_ASYNC;
+        private int MaxMethods = 4;
+        private int DefaultNumLevel = 2;
 
 
         public FormAsync()
@@ -55,28 +56,30 @@ namespace UIHowToWorkAsync
             List<IUseMethod> methods = new List<IUseMethod>();
             int height = 0;
             int width = 0;
-            for (int i = 0; i < selected; i++)
+            for (int i = 1; i <= selected; i++)
             {
 
                 UseMethod Met = new UseMethod();
 
-                if (i == 0)
+                if (i == 1)
                 {
                     height = Met.Height + 15;
                     width = Met.Width + 20;
                     Method = Met;
                 }
 
-                Met.EventChange = null;
+                //Met.EventChange = null;
                 Met.Level = i;
                 Met.Name = "useMethod" + i;
                 Met.Next = null;
                 Met.NumSteps = DefaulttrackMethod;
                 Met.Size = new System.Drawing.Size(446, 89);
                 Met.TabIndex = 30;
-                Met.TypeWork = DefaultETypeWork;
-                Met.TypeNextImpl = DefaultETypeImplementation;
+                Met.TypeDoIndependentWork = DefaultETypeWork;
+                Met.TypeImpl = DefaultETypeImplementation;
                 Met.CallNext = DefaultECallNext;
+                Met.StrategyDoIndependentWork = DefaultDoIndependentWork;
+                
 
                 topLocation = i * (Met.Height + 1);
                 // Met.Location = new System.Drawing.Point(0, topLocation);
@@ -86,7 +89,7 @@ namespace UIHowToWorkAsync
 
             panelMethodsFlow.Width = width;
             panelMethodsFlow.Height = (methods.Count * height);
-            PLeftMain.MaximumSize = new System.Drawing.Size() { Width = width + 15 };
+            PLeftMain.MaximumSize = new System.Drawing.Size() { Width = width + 20 };
             PLeftMain.Width = width + 15;
             methods.Reverse();
 
@@ -96,6 +99,7 @@ namespace UIHowToWorkAsync
                 auxMet.Next = current;
                 current = auxMet;
             }
+           
             this.Enabled = true;
         }
 
@@ -106,10 +110,7 @@ namespace UIHowToWorkAsync
                 MessageBox.Show("The test is not well configured");
                 return;
             }
-
-            bttPrint.Visible = false;
-
-
+            
             string validation = Method.ValidateConfigurations();
             if (!string.IsNullOrEmpty(validation))
             {
@@ -117,38 +118,38 @@ namespace UIHowToWorkAsync
                 return;
             }
 
+            bttPrint.Visible = false;
 
             this.Enabled = false; /*deshabilita pantalla*/
-
-
+            
             ReportGenerator reporter = new ReportGenerator();
             IGetBase implementacionMain = null;
             try
             {
-
-                // await Task.Run(() =>
-                //  {
-                Launcher lanzador = null;
+                Launcher launcherMethods = null;
                 implementacionMain = HowToWorkAsync.ImpDynamic.FactoryImpl.GetInstance(Method, reporter);
-
+                string resValidate = implementacionMain.Validate();
+                if (!string.IsNullOrEmpty(resValidate))
+                {
+                    MessageBox.Show(resValidate);
+                    this.Enabled = true;
+                    return;
+                }
                 try
                 {
 
-                    lanzador = new Launcher(reporter, implementacionMain);
-                    informe = await lanzador.Run();
+                    launcherMethods = new Launcher(reporter, implementacionMain);
+                    informe = await launcherMethods.Run();
                 }
                 catch (Exception ex1)
                 {
-                    reporter.FillingOutTheReport( ETypePoint.STAR_END,"Ex1", -1, Thread.CurrentThread.ManagedThreadId);
+                    reporter.FillingOutTheReport( ETypePoint.START_END,"Ex1", -1, Thread.CurrentThread.ManagedThreadId);
                     MessageBox.Show(ex1.Message);
                 }
-                // }
-                //);
-
             }
             catch (Exception ex)
             {
-                reporter.FillingOutTheReport(ETypePoint.STAR_END,"Ex2", -1, Thread.CurrentThread.ManagedThreadId);
+                reporter.FillingOutTheReport(ETypePoint.START_END,"Ex2", -1, Thread.CurrentThread.ManagedThreadId);
                 MessageBox.Show(ex.Message);
             }
             finally
@@ -171,7 +172,7 @@ namespace UIHowToWorkAsync
             this.Enabled = true;
         }
 
-        IStrategyProcessReport CrearProcesador()
+        IProcessReportStrategy CrearProcesador()
         {
             return new StrategyPintar(grafica,
                                       chkOrdernar.Checked,
@@ -244,13 +245,19 @@ namespace UIHowToWorkAsync
         {
             if (Method != null)
             {
+                bttPrint.Visible = false;
                 var form = new FormTree();
                 form.Print(Method);
-                bttPrint.Visible = false;
+                bttPrint.Visible = true;
             }
         }
 
         private void options_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FormAsync_Load(object sender, EventArgs e)
         {
 
         }

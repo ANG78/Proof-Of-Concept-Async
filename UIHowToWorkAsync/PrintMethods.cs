@@ -36,39 +36,58 @@ namespace UIHowToWorkAsync
             if (parameter == null || parameter.Implementation == null)
                 return;
 
-            string literal = parameter.IdMethod;
+            string literal = parameter.IdMethod ;
             var color = colors[parameter.Level % colors.Length];
 
             if (parameter.Level == 0)
                 colorNext = color;
 
             TreeNode parent = current ?? tree.Nodes[tree.Nodes.Count - 1];
-            current = Write(parent, callNext + " " + literal + "     (" + parameter.TypeNextImpl + ")", colorNext);
 
+            if (string.IsNullOrWhiteSpace(callNext))
+            {
+                current = Write(parent, literal + " " + (parameter.Implementation is IGetString ? " Main()" : "MainAsync()"), colorNext);
+            }
+            else
+            {
+                current = Write(parent, callNext, colorNext);
+                var colorHeader = colors[parameter.Level % colors.Length];
+                current = Write(current, literal + " " + (parameter.Implementation is IGetString ? " Main()" : "MainAsync()"), colorHeader);
+            }
+            
+            
             colorNext = color;
             var current2 = current;
 
             string nextImp, getNextSting, todo;
             nextImp = getNextSting = "";
 
-            if (parameter.Implementation is IGetStringIn2Phases)
+            if (parameter.Implementation is ICallNextDescription)
             {
-                nextImp = ((IGetStringIn2Phases)parameter.Implementation).CallNextDescription();
-                getNextSting = ((IGetStringIn2Phases)parameter.Implementation).HowToGetResultNextDescription();
+                nextImp = ((ICallNextDescription)parameter.Implementation).PreDescription();
+                getNextSting = ((ICallNextDescription)parameter.Implementation).PostDescription();
             }
-            todo = parameter.Implementation.MyWorkDescription();
+            todo = parameter.Implementation.DoIndependetWork.Description();
 
+            var todoStrategy = parameter.Implementation.DoIndependetWork.StrategyTodo?.Description();
+            
 
             if (parameter.Next != null)
             {
+                nextImp = nextImp.Replace("Next", parameter.Next.IdMethod);
                 callNext = @"VAR X" + parameter.Level + " = " + nextImp;
                 Print(parameter.Next);
-                Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
-                Write(current2, @"Return X" + parameter.Level + getNextSting + " + Y" + parameter.Level, color);
+                var indpenWork = Write(current2, @"VAR Y" + parameter.Level + " = " + todo, color);
+                indpenWork = Write(indpenWork, "DoIndependentWork()", color);
+                Write(indpenWork, todoStrategy, color);
+                getNextSting = getNextSting.Replace("Next", "X" + parameter.Level);
+                Write(current2, @"Return" + " Y" + parameter.Level + " + " + getNextSting, color);
             }
             else
             {
-                Write(current2, @"Return " + todo, color);
+                var indpenWork = Write(current2, @"Return " + todo, color);
+                indpenWork = Write(indpenWork, "DoIndependentWork()", color);
+                Write(indpenWork, todoStrategy, color);
             }
         }
 
