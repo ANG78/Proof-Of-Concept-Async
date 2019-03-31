@@ -1,121 +1,126 @@
-# Async/Await
+# Async/Await/GetAwaiter
 
-Basado en el artículo relativo a Asyn/Await de microsoft (https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/ ) uno encuentra este esquema en el mismo, donde se ilustra cómo funciona.
+[Basado en el artículo relativo a Asyn/Await de microsoft ](https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/)
+uno encuentra este esquema donde se ilustra 
+cómo funciona las keys Async y Wait.
 
 ![alt text](img/msdnAsyncpicture.png)
 
+Podemos ver que se ejecuta dentro de un método 'async' para acceder asincronamente al contenido de una URL por http. Los siguientes pasos se ejecutan durante su ejecución:
 
-Siguiendo ese esquema, me surgió la curiosidad profesional de saber cómo es su performance.
+1) la descarga de una pagina por http. Aunque el método es Async, la key wait no se coloca en dicha línea.
 
-La idea era definir una cascada de llamadas entre métodos que van a componer una cadena (string) como resultado de la conctenación de la generada por su siguiente y la generada en el propio método.
+2) Esto hace que la ejecución se haga en paralelo de un trabajo "DoIndependentWork()" 
 
+3) Luego se hace una espera usando la key 'wait' sobre la task creada para la descarga.
 
-![alt text](img/callStackMethods.png)
+4) una vez la task es completada, se devuelve el tamaño de la página.
 
+# Y las dudas surgieron..
 
-En el ejemplo de Microsoft, se ejecutaba en paralelo un trabajo al tiempo que se invoca previamente a la carga de un de la página "http://.../..."
+Siguiendo ese esquema, surgieron dudas como:
 
+¿cómo es realmente su performance?
+¿Cúantos hilos?¿Cómo avanza la ejecución del DoIndependentWork con respecto a la descarga de la página web?
 
-En la prueba de conceptos, se invocará a un siguiente método para obtener su resultado y por otro lado, generará la suya propia para luego concatenarla y devolverla al invocante.
+¿cómo seria el performance si usamos el GetAwaiter y/o GetResult de la clase Task en vez de usar la key 'wait'?
 
+En el ejemplo entendí que habia cierto avance en paralelo entre la descarga web y el DoIndependentWork, pero..  cuando éste termina y  se hace la espera de la task ¿ el invocante del método AccessTheWebAsync también estaría progresando por dicho wait?
 
-## Cómo genera su propio resultado un método 
+¿Puede haber deadlock en algún contexto si se mezclan llamas con wait y otras con GetAwaiter?
 
-Para obtener el resultado del propio método, vamos a poder definir el cómo:
+Entonces,.. antes estas dudas y otras que han ido surgiendo.. implementé esta aplicación a modo de prueba de concepto. 
 
-1) Numero de Steps o milisegudos
-2) Estrategia Looping o Sleeping
-  
-  La estrategia Looping es una iteracion de N-Steps en las que se generará un Punto en cada uno  de ellas con un descanso de 5 mls.
+# ¿En que consiste la prueba de concepto?
 
-  La estrategia Sleeping genera dos puntos. Uno al comienzo y el otro despues del intervalo de tiempo definido por el usuario.
+En el ejemplo de Microsoft,.. tenemos las siguientes funciones...
 
-La idea, es simular una carga de trabajo en cada método, para ver como afecta a la ejecución entre ambos hilos.
+## Rol de GetStringAsync ##
 
+Este procedimiento asíncrono se invoca 
+de tal manera que no haya bloqueo sobre el hilo invocante, el cual en vez de esto, facilita el progreso de la ejecución del método DoIndependentWork.
 
-nota: También se ha visto interesante ver como impacta la ejecución (sync/await) de este tarea independiente sobre su proceso padre.
+En la prueba de concepto se va a sustituir por la llamada a un método asyncrono (o su versión no asyncrona si procede), el cual deberá devolver una cadena de texto. Para que dicha llamada asíncrona tuviera más sentido, se introducirán los elementos necesarios para provocar un efecto "bloqueo" que haga que avance de los DoIndependentWork
 
-## interfaces
+1) GetStringAsync()
 
-Las interfaces son las siguientes que se muestran en la siguiente figura.
+2) GetString()
 
-![alt text](img/InterfacesAsync.jpg)
+## Rol de DoIndependentWork ##
 
+Cada método compondrá su propia cadena. 
 
-Entonces en dicha cascada nos encontraremos varias combinaciones de implementaciones de estas interfaces, resultando que:
+La idea es ver como impacta al performance de los async en los casos que:
 
-* Metodos Async llamaran a un metodo Sync
-  * Con Warnings dados por Visual Studio avisando que se ejecutarán de manera sync
-  * Sin Warnings
+1) si se hace un uso más o menos intensivo de la CPU
 
-* Metodos Sync llamaran a un metodo Async
+2) si se hace de manera Async o no
 
-nota: de aqui surgió la necesidad de simular casos como... ¿Que pasaría si el metodo invocado termina antes que el invocado en un escenario de cascadas de llamadas async? 
+Durante la creación de la cadena, se van a generar los puntos de las series que más adelante se mostraran en la gráfica.
 
-En el siguiente diagrama de clases se tiene una visión global de lo que se prentende hacer en esta prueba de  concepto.
+Dependiendo de la combinación de los puntos 1) y 2) la concurrencia la gráfica final estará mezclada en mayor o menor medida.
 
-![alt text](img/DiagramAsync.jpg)
+Por eso, la gráfica será tratada como un recurso compartido, serializando su acceso a ella.  
 
-Focalizándonos en las clases abstractas, tendremos que:
+## Resumiendo.. ##
 
-1) Method: es una abstracción de las dos implementaciones
-2) MyWork definirá como el método en cuestión hará o simulará su cadena
-3) Call Next Async y Call Next Sync definiran la relación la relación del método con su siguiente
+La aplicación definirá una cascada de métodos  de varios niveles.
 
+Se podrá elegir por cada nivel o método, 
 
-En la siguiente captura, se tendrá una idea de como se podría definir los escenarios en el panel de la izquierda.
+1) Si va a ser implementado con Async o no
 
-![alt text](img/capture1.png)
+2) Número de iteraciones o milisegundos a simular dependiendo si se elige Looping o Sleeping
 
-En la parte derecha se tiene una representación gráfica del resultado generado en dicho escenario
+3) Ejecución Async o no, del punto 2)
 
+4) Como se llamará al siguiente Método
 
-## Escenarios:Se va a poder definir ##
+Cuando un método termine completamente su ejecución (Rol de DoIndependentWork), va a devolver a su invocante lo generado por él mismo más lo generado por lo que su siguiente generó, como ilustra la imagen siguiente.
 
-1) el número de métodos o (niveles)
+![alt text](img/callStackMethods.png) 
 
-2) elegir entre la signatura sync o async del metodo
+1) El resultado final debe ser predicible,  para así validar si funciona correctamente la combinación de implementaciones.
 
-3) el comportamiento del método
+2) Por otro lado, nos mostrará el tiempo tardado
 
-* número de pasos o milisegundos, en función de si se elige Looping o Sleeping
+3) Se podrá visualizar el algoritmo que implementa dicha cascada definida por el usuario.
 
-![alt text](img/SleepingOneMethod.png)
-* uso no intensivo (sleeping de 250 mls en la captura) 
+4) Se visualizará el orden en que se crearon los puntos
 
-![alt text](img/LoopingOneMethod.png)
-* uso intensivo (Looping de 25 pasos con un descanso de 5 mls entre paso y paso)  
+La siguiente imagen es una muestra de lo que se pretende monitorizar con la aplicación.
 
-4) se va a poder definir cómo se va llamar al siguiente método siguiendo estas estratedgias
+![alt text](img/Example3Levels.png)
 
-  * Wait first (para async/sync)
+En la captura podemos ver como:
 
-    1) llamar al siguiente metodo y esperar su resultado (WAIT)
-    2) componer su propia cadena (todo)
-    3) concatenar ambas y salir
+1) configuracion de la prueba en la parte superior izquierda
 
-  * Wait after (para async/sync)
+1.1) al elegir el número de niveles, se generan tantos niveles como el parámetro Levels es indicado ( en este caso 3)
 
-    1) preparar la Task para llamar al siguiente método y empezar su ejecución
-    2) componer su propia cadena (MyWork)
-    3) esperar a que termine el paso 1)
-    4) concatenar ambas cadenas 1) y 3), y salir
+1.2) se ha indicado que se muestre el nombre de la serie sobre la gráfica
 
-  * Awaiter (para async)
+3) los métodos generados en la parte inferior/central izquierda configura los métodos.
 
-    1) preparar la Task con un Awaiter para llamar al siguiente método y empezar su ejecución
-    2) componer su propia cadena (MyWork)
-    3) esperar a que termine el paso 1)
-    4) concatenar ambas cadenas 1) y 3), y salir
+ 3.1)  Tipo de implementación: Async o Sync 
 
-  * Not Wait (para async)
-    1) preparar la Task para llamar al siguiente método y empezar su ejecución
-    2) componer su propia cadena (MyWork)
-    3) Sin esperar, obtener la cadena de paso 1)
-    4) concatenar ambas cadenas 1) y 3), y salir
+ 3.2) LOOPING de 25 o 65, indica que son iteraciones
+
+ 3.3) WRAPPER_ASYNC, indica que el Loopingse hace de manera asíncrono para los médodos 1 y 2. Para el método 3, se hace una iteración Normal.
+
+ 3.4)  WAIT_AFTER, es el modo que los Métodos 1 y 2, hacen su llamada asíncrona a sus respectivos siguientes. Más detalles, hacer click en los detalles de implementación.
 
 
-  nota1: Si no usamos la key await dentro de un método con su firma async, el compilador de Visual Studio lanza un Warning informando sobre tal circunstancia( esto ocurrira en las estrategias Awaiter y no Wait)
+4) La gráfica mostrada es por puntos. Se puede apreciar como los puntos del método 1 y 2 se intercalaron en la ejecución, mientras que los del método 3 no. Esto tiene su explicación.
 
-  nota2: En lo relativo a "Not Wait", se ha introducido esta estrategia para intentar tner en cuanta esos casos en los que las refactorizaciones de código hacen que esta circusntancias pasen, y el compilador aunque lance un aviso de WARNING son ignoradas por los desarrolladores. Es cierto, que en el artículo referido anteriormente dice que en caso de no encontrarse un await el comportamiento se hace Sincrono, pero también es cierto que el resultado en ciertos contextos puede dejar latente un error difícil de detectar.
+
+# Para más detalles de ..
+
+hacer click Aquí.. [Para saber más detalles de implementacion](HowToGraphicSeriesAreDone.md)
+
+hacer click Aquí.. [Para saber más detalles de la aplicación](HowToWork.md)
+
+hacer click Aquí.. [Conclusiones..](Conclusions.md)
+
+
 

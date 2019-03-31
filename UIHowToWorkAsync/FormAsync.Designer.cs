@@ -55,6 +55,7 @@
             this.panelMethodsFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.PLeftMain = new System.Windows.Forms.Panel();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.chkAutoSave = new System.Windows.Forms.CheckBox();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grafica)).BeginInit();
             this.options.SuspendLayout();
@@ -195,6 +196,7 @@
             // 
             // options
             // 
+            this.options.Controls.Add(this.chkAutoSave);
             this.options.Controls.Add(this.chkLostPoints);
             this.options.Controls.Add(this.chkStartEnd);
             this.options.Controls.Add(this.bttPrint);
@@ -364,6 +366,16 @@
             this.splitter1.TabIndex = 47;
             this.splitter1.TabStop = false;
             // 
+            // chkAutoSave
+            // 
+            this.chkAutoSave.AutoSize = true;
+            this.chkAutoSave.Location = new System.Drawing.Point(226, 20);
+            this.chkAutoSave.Name = "chkAutoSave";
+            this.chkAutoSave.Size = new System.Drawing.Size(51, 17);
+            this.chkAutoSave.TabIndex = 48;
+            this.chkAutoSave.Text = "Save";
+            this.chkAutoSave.UseVisualStyleBackColor = true;
+            // 
             // FormAsync
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -415,5 +427,6 @@
         private System.Windows.Forms.Button bttPrint;
         private System.Windows.Forms.CheckBox chkStartEnd;
         private System.Windows.Forms.CheckBox chkLostPoints;
+        private System.Windows.Forms.CheckBox chkAutoSave;
     }
 }
