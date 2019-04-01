@@ -256,6 +256,7 @@ namespace UIHowToWorkAsync
         public IGetBase Implementation { get; set; }
 
 
+
         private void SetLabelUnit()
         {
             HelperUI.ModifyMethod(lblTrack, () =>
@@ -267,6 +268,29 @@ namespace UIHowToWorkAsync
 
         private void UseMethod_Load(object sender, EventArgs e)
         {
+
+        }
+
+
+        public string NameForReport
+        {
+            get
+            {
+                string result =  "M" + Level.ToString() + "_" +
+                                TypeImpl.ToString() + "_" +
+                                NumSteps.ToString() +
+                                TypeDoIndependentWork.ToString() +
+                                StrategyDoIndependentWork.ToString() +
+                                (Next != null ? "_" + CallNext.ToString() : "");
+
+                if (Next != null)
+                {
+                    result += "__" + Next.NameForReport;
+                }
+
+                return result;
+
+            }
 
         }
 

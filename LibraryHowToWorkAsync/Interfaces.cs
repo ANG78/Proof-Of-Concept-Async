@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HowToWorkAsync
 {
@@ -30,6 +31,7 @@ namespace HowToWorkAsync
     {
         string Description();
         string Todo(string cadena, int idThread);
+        Task<string> TodoAsync(string cadena, int idThread);
         bool IsTime();
         int AmountOfStepsOrMls();
     }

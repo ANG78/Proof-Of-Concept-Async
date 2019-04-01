@@ -14,6 +14,7 @@ namespace HowToWorkAsync
 
     public class Report
     {
+        public string ScenarioName { get; set; }
         public string Title { get; set; }
         public string Results { get; set; }
         public IEnumerable<Serie> Series { get; set; }

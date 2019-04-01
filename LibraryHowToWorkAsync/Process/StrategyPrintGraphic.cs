@@ -5,7 +5,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace HowToWorkAsync.Process
 {
-    public class StrategyPintar : IProcessReportStrategy
+    public class StrategyCreateGraphic : IProcessReportStrategy
     {
         readonly Chart chart;
         readonly bool chkOrder;
@@ -18,7 +18,7 @@ namespace HowToWorkAsync.Process
         readonly SeriesChartType cmbTypeOfGraphic;
 
 
-        public StrategyPintar(Chart pgrafica,
+        public StrategyCreateGraphic(Chart pgrafica,
                               bool pchkOrdernar,
                               bool pchkSerie,
                               bool pchkSerieSinIds,
@@ -144,11 +144,20 @@ namespace HowToWorkAsync.Process
 
         }
 
-        public void WriteToFile(Report informe, string path)
+        public void WriteToFile( Report informe, string pathFolder)
         {
+            if (informe == null)
+            {
+                return;
+            }
+
+            
+            chart.SaveImage(@pathFolder +  DateTime.Now.Ticks +  "_" + informe.ScenarioName + "." + ChartImageFormat.Png.ToString()  , ChartImageFormat.Png);
+
+            return;
             List<string> cadenaFinal = new List<string>();
 
-            System.IO.File.Delete(path);
+            System.IO.File.Delete(pathFolder);
             if (informe.Series == null)
                 throw new Exception("Fallo de impl, el listado de series no puede estar nula");
 
@@ -190,7 +199,7 @@ namespace HowToWorkAsync.Process
 
 
 
-            System.IO.File.AppendAllLines(path, cadenaFinal);
+            System.IO.File.AppendAllLines(pathFolder, cadenaFinal);
         }
 
 

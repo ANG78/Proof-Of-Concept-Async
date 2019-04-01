@@ -14,5 +14,6 @@
         ETypeDoIndependentWork TypeDoIndependentWork { get; set; }
         EStrategyDoIndependentWork StrategyDoIndependentWork { get; set; }
         ECallNext CallNext { get; set; }
+        string NameForReport { get; }
     }
 }

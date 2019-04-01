@@ -79,7 +79,7 @@ namespace UIHowToWorkAsync
                 Met.TypeImpl = DefaultETypeImplementation;
                 Met.CallNext = DefaultECallNext;
                 Met.StrategyDoIndependentWork = DefaultDoIndependentWork;
-                
+
 
                 topLocation = i * (Met.Height + 1);
                 // Met.Location = new System.Drawing.Point(0, topLocation);
@@ -99,8 +99,14 @@ namespace UIHowToWorkAsync
                 auxMet.Next = current;
                 current = auxMet;
             }
-           
+
             this.Enabled = true;
+        }
+
+        private string GetNameforReport()
+        {
+            string name = cmbTipoGrafica.SelectedItem.ToString() + "_" + this.Method.NameForReport;
+            return name;
         }
 
         private async void bttRun_Click(object sender, EventArgs e)
@@ -110,7 +116,7 @@ namespace UIHowToWorkAsync
                 MessageBox.Show("The test is not well configured");
                 return;
             }
-            
+
             string validation = Method.ValidateConfigurations();
             if (!string.IsNullOrEmpty(validation))
             {
@@ -121,9 +127,10 @@ namespace UIHowToWorkAsync
             bttPrint.Visible = false;
 
             this.Enabled = false; /*deshabilita pantalla*/
-            
+
             ReportGenerator reporter = new ReportGenerator();
             IGetBase implementacionMain = null;
+            informe = null;
             try
             {
                 Launcher launcherMethods = null;
@@ -143,13 +150,13 @@ namespace UIHowToWorkAsync
                 }
                 catch (Exception ex1)
                 {
-                    reporter.FillingOutTheReport( ETypePoint.START_END,"Ex1", -1, Thread.CurrentThread.ManagedThreadId);
+                    reporter.FillingOutTheReport(ETypePoint.START_END, "Ex1", -1, Thread.CurrentThread.ManagedThreadId);
                     MessageBox.Show(ex1.Message);
                 }
             }
             catch (Exception ex)
             {
-                reporter.FillingOutTheReport(ETypePoint.START_END,"Ex2", -1, Thread.CurrentThread.ManagedThreadId);
+                reporter.FillingOutTheReport(ETypePoint.START_END, "Ex2", -1, Thread.CurrentThread.ManagedThreadId);
                 MessageBox.Show(ex.Message);
             }
             finally
@@ -157,7 +164,25 @@ namespace UIHowToWorkAsync
             }
 
 
-            CrearProcesador().Execute(informe);
+            try
+            {
+                if (informe != null)
+                {
+                    var proc = CreateProcessor();
+                    proc.Execute(informe);
+                    if (chkAutoSave.Checked)
+                    {
+                        informe.ScenarioName = GetNameforReport();
+                        proc.WriteToFile(informe, @"C:\Source\Repos\saved\");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Enabled = true;
+                MessageBox.Show(ex.Message);
+            }
+
             this.Enabled = true;
             bttPrint.Visible = true;
         }
@@ -172,9 +197,9 @@ namespace UIHowToWorkAsync
             this.Enabled = true;
         }
 
-        IProcessReportStrategy CrearProcesador()
+        IProcessReportStrategy CreateProcessor()
         {
-            return new StrategyPintar(grafica,
+            return new StrategyCreateGraphic(grafica,
                                       chkOrdernar.Checked,
                                       chkSerie.Checked,
                                       chConId.Checked,
@@ -186,23 +211,25 @@ namespace UIHowToWorkAsync
         }
 
 
-        private void HelperProcesar(bool aplicar = true)
+        private void HelperProcesar()
         {
+            if (informe == null)
+                return;
+
             if (this.Enabled != false)
                 this.Enabled = false;
 
             try
             {
-                var proc = CrearProcesador();
-                if (aplicar)
-                {
-                    proc.Execute(informe);
-                }
-                else
-                {
-                    proc.WriteToFile(informe, "c:\\file" + DateTime.Now.ToString().Replace("/", "_").Replace(":", "_") + ".csv");
-                }
 
+                var proc = CreateProcessor();
+                proc.Execute(informe);
+                if (chkAutoSave.Checked)
+                {
+                    informe.ScenarioName = GetNameforReport();
+                    proc.WriteToFile(informe, @"C:\Source\Repos\saved\");
+                }
+                
             }
             catch (Exception ex)
             {
@@ -223,7 +250,7 @@ namespace UIHowToWorkAsync
 
         private void button1_Click(object sender, EventArgs e)
         {
-            HelperProcesar(false);
+            HelperProcesar();
         }
 
         private void chkTiempoTicks_CheckedChanged(object sender, EventArgs e)

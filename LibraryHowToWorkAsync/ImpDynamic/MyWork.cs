@@ -14,9 +14,14 @@ namespace HowToWorkAsync.ImpDynamic
             generator = pgenerator;
         }
 
-        public string DoIndepentWork(string message, int idTread)
+        protected string DoIndepentWork(string message, int idTread)
         {
             return StrategyTodo.Todo(message, idTread);
+        }
+
+        public async Task<string> DoIndepentWorkAsync(string message, int idTread)
+        {
+            return await StrategyTodo.TodoAsync(message, idTread);
         }
 
         protected int TaskBaseNumeroIteracionesOTiempo(string cadena)
@@ -28,7 +33,7 @@ namespace HowToWorkAsync.ImpDynamic
     }
 
 
-    
+
     public class MyWorkSync : MyWork, IMyWorkSync
     {
         public MyWorkSync(IStrategyTodo pProcesamiento, IGenerateSerie pgenerator)
@@ -68,12 +73,11 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override async Task<string> GetStringAsync(string name, int idThread)
         {
-            return await Task.Run(() =>
-            {
-                return DoIndepentWork(name, idThread);
-            });
+            return await DoIndepentWorkAsync(name, idThread);
         }
-        
+
+
+
         public override string Description()
         {
             return "await Task.Run(() => { return DoIndepentWork(); });";
@@ -94,10 +98,7 @@ namespace HowToWorkAsync.ImpDynamic
 
         public override async Task<string> GetStringAsync(string name, int idThread)
         {
-            return Task.Run(() =>
-                {
-                    return DoIndepentWork(name, idThread);
-                }).GetAwaiter().GetResult();
+            return DoIndepentWorkAsync(name, idThread).GetAwaiter().GetResult();
         }
 
         public override string Description()
