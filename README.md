@@ -2,7 +2,7 @@
 
 [Basado en el artículo relativo a Asyn/Await de microsoft ](https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/)
 uno encuentra este esquema donde se ilustra 
-cómo funciona las keys Async y Wait.
+cómo funciona las keys Async y Await.
 
 ![alt text](img/msdnAsyncpicture.png)
 
