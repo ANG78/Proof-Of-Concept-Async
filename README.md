@@ -63,9 +63,9 @@ Cada método compondrá su propia cadena la cual formára parte parcial de la ca
 
 La idea es ver como impacta al performance de los async en los casos que:
 
-1) si se hace un uso más o menos intensivo de la CPU
+    1) si se hace un uso más o menos intensivo de la CPU
 
-2) si se hace de manera Async o no
+    2) si se hace de manera Async o no
 
 Durante la creación de la cadena, se van a generar los puntos de las series que más adelante se mostraran en la gráfica.
 
@@ -77,25 +77,25 @@ La aplicación definirá una cascada de métodos  de varios niveles.
 
 Se podrá elegir por cada nivel o método, 
 
-1) Si va a ser implementado con Async o no
+    1) Si va a ser implementado con Async o no
 
-2) Número de iteraciones o milisegundos a simular dependiendo si se elige Looping o Sleeping
+    2) Número de iteraciones o milisegundos a simular dependiendo si se elige Looping o Sleeping
 
-3) También se va a poder elegir si la ejecución del mismo DoIndependentWork se ejecutará en modo Async o no
+    3) También se va a poder elegir si la ejecución del mismo DoIndependentWork se ejecutará en modo Async o no
 
-4) Se podrá definir la estrategia a seguir para hacer la invocación al siguiente Método
+    4) Se podrá definir la estrategia a seguir para hacer la invocación al siguiente Método
 
 Cuando un método termine completamente su ejecución (Rol de DoIndependentWork), va a devolver a su invocante la cadena generada por éste mismo más lo generado por el siguiente método, como ilustra la figura.
 
 ![alt text](img/callStackMethods.png) 
 
-1) El resultado final debe ser predicible,  para así validar si funciona correctamente la combinación de implementaciones/invocaciones.
+    1) El resultado final debe ser predicible,  para así validar si funciona correctamente la combinación de implementaciones/invocaciones.
 
-2) Por otro lado, nos mostrará el tiempo tardado por cada método.
+    2) Por otro lado, nos mostrará el tiempo tardado por cada método.
 
-3) Se podrá visualizar el algoritmo que implementa dicha cascada.
+    3) Se podrá visualizar el algoritmo que implementa dicha cascada.
 
-4) Se visualizará el orden en que se crearon los puntos
+    4) Se visualizará el orden en que se crearon los puntos
 
 La siguiente imagen es una muestra de lo que se pretende monitorizar con la aplicación.
 
@@ -103,24 +103,24 @@ La siguiente imagen es una muestra de lo que se pretende monitorizar con la apli
 
 En la captura podemos ver como:
 
-1) configuracion de la prueba en la parte superior izquierda
+    1) configuracion de la prueba en la parte superior izquierda
 
-1.1) al elegir el número de niveles, se generan tantos niveles como el parámetro Levels es indicado ( en este caso 3)
+        1.1) al elegir el número de niveles, se generan tantos niveles como el parámetro Levels es indicado ( en este caso 3)
 
-1.2) se ha indicado que se muestre el nombre de la serie sobre la gráfica
+        1.2) se ha indicado que se muestre el nombre de la serie sobre la gráfica
 
-3) los métodos generados en la parte inferior/central izquierda configura los métodos.
+    2) los métodos generados en la parte inferior/central izquierda configura los métodos.
 
- 3.1)  Tipo de implementación: Async o Sync 
+        2.1)  Tipo de implementación: Async o Sync 
 
- 3.2) LOOPING de 25 o 65, indica que son iteraciones
+        2.2) LOOPING de 25 o 65, indica que son iteraciones
 
- 3.3) WRAPPER_ASYNC, indica que el Loopingse hace de manera asíncrono para los médodos 1 y 2. Para el método 3, se hace una iteración Normal.
+        2.3) WRAPPER_ASYNC, indica que el Loopingse hace de manera asíncrono para los médodos 1 y 2. Para el método 3, se hace una iteración Normal.
 
- 3.4)  WAIT_AFTER, es el modo que los Métodos 1 y 2, hacen su llamada asíncrona a sus respectivos siguientes. Más detalles, hacer click en los detalles de implementación.
+        2.4)  WAIT_AFTER, es el modo que los Métodos 1 y 2, hacen su llamada asíncrona a sus respectivos siguientes. Más detalles, hacer click en los detalles de implementación.
 
 
-4) La gráfica mostrada es por puntos. Se puede apreciar como los puntos del método 1 y 2 se intercalaron en la ejecución, mientras que los del método 3 no. Esto tiene su explicación.
+    3) La gráfica mostrada es por puntos. Se puede apreciar como los puntos del método 1 y 2 se intercalaron en la ejecución, mientras que los del método 3 no. Esto tiene su explicación.
 
 
 # Para más detalles de ..
