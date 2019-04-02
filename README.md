@@ -1,4 +1,4 @@
-# Async/Await/GetAwaiter
+# Async/Await/GetAwaiter (.NET)
 
 [Basado en el artículo relativo a Asyn/Await de microsoft ](https://docs.microsoft.com/es-es/dotnet/csharp/programming-guide/concepts/async/)
 uno encuentra este esquema donde se ilustra 
@@ -8,11 +8,11 @@ cómo funciona las keys Async y Await.
 
 Podemos ver que se ejecuta dentro de un método 'async' para acceder asincronamente al contenido de una URL por http. Los siguientes pasos se ejecutan durante su ejecución:
 
-1) la descarga de una pagina por http. Aunque el método es Async, la key wait no se coloca en dicha línea.
+1) la descarga de una pagina por http. Aunque el método es Async, la key 'await' no se coloca en dicha línea.
 
 2) Esto hace que la ejecución se haga en paralelo de un trabajo "DoIndependentWork()" 
 
-3) Luego se hace una espera usando la key 'wait' sobre la task creada para la descarga.
+3) Luego se hace una espera usando la key 'await' sobre la task creada para la descarga.
 
 4) una vez la task es completada, se devuelve el tamaño de la página.
 
@@ -21,34 +21,45 @@ Podemos ver que se ejecuta dentro de un método 'async' para acceder asincroname
 Siguiendo ese esquema, surgieron dudas como:
 
 ¿cómo es realmente su performance?
-¿Cúantos hilos?¿Cómo avanza la ejecución del DoIndependentWork con respecto a la descarga de la página web?
+¿Cúantos hilos?¿Cómo avanza la ejecución del DoIndependentWork con respecto al método Asíncrono?
 
-¿cómo seria el performance si usamos el GetAwaiter y/o GetResult de la clase Task en vez de usar la key 'wait'?
+¿cómo seria el performance si usamos el GetAwaiter y/o GetResult de la clase Task en vez de usar la key 'await'?
 
-En el ejemplo entendí que habia cierto avance en paralelo entre la descarga web y el DoIndependentWork, pero..  cuando éste termina y  se hace la espera de la task ¿ el invocante del método AccessTheWebAsync también estaría progresando por dicho wait?
+En el ejemplo entendí que habia cierto avance en paralelo entre la descarga web y el DoIndependentWork, pero..  cuando éste último termina y se hace la espera de la task ¿ el método invocante a dicho método  (en otras palabras, sería el que está por encima en la pila de llamadas) AccessTheWebAsync.. también estaría progresando su ejecución?
 
-¿Puede haber deadlock en algún contexto si se mezclan llamas con wait y otras con GetAwaiter?
+¿Puede haber deadlock en algún contexto si se mezclan llamadas await y GetAwaiter? ¿Que pasaría si un metodo que devuelve una Task y se le invocó con un Getwaiter..  al tiempo se le añadiera la key Async a dicha implementación?
 
-Entonces,.. antes estas dudas y otras que han ido surgiendo.. implementé esta aplicación a modo de prueba de concepto. 
+Entonces,.. ante estas dudas y otras que han ido surgiendo.. implementé esta aplicación a modo de prueba de concepto. 
+
+Y para terminar esta introducción, cosas que me llamaron la atención a vuela pluma,.. 
+
+1) no se puede definir interfaces con la key "async" al menos que yo sepa. El compilador no lo permite, pero sin embargo, a la hora de implementarlo se puede elegir entre añadirse o no.. Con lo cual, pienso que el convenio de marcar los métodos con el sufijo Async, se me antoja más una necesidad que un consejo. 
+
+2) por otro lado, si tenemos un método con su signatura Async ( y el nombre del método bien sufijado ) pero su cuerpo no contiene ningún await, en dicho caso se comportaría de manera asíncrona. ¿Qué pasaría si el await pese a existir en dicho método, estuviera sujeto a la condicón de un if y ésta no se diera?¿Cuál sería el comportamiento?
+
+3) por último y no menos importante, mpresionante documentación del método GetAwaiter. No se puede ser más escueto. https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.getawaiter?view=netframework-4.7.2 
+
 
 # ¿En que consiste la prueba de concepto?
 
-En el ejemplo de Microsoft,.. tenemos las siguientes funciones...
+Inspirado en el ejemplo de Microsoft relatado al principio de este artículo,.. tenemos las siguientes funciones o roles GetStringAsync y DoIndependentWork. 
+
 
 ## Rol de GetStringAsync ##
 
 Este procedimiento asíncrono se invoca 
 de tal manera que no haya bloqueo sobre el hilo invocante, el cual en vez de esto, facilita el progreso de la ejecución del método DoIndependentWork.
 
-En la prueba de concepto se va a sustituir por la llamada a un método asyncrono (o su versión no asyncrona si procede), el cual deberá devolver una cadena de texto. Para que dicha llamada asíncrona tuviera más sentido, se introducirán los elementos necesarios para provocar un efecto "bloqueo" que haga que avance de los DoIndependentWork
+En la prueba de concepto se va a sustituir por la llamada a un método asyncrono (o su versión no asyncrona si procede), el cual deberá devolver una cadena de texto ( en el ejemplo original, se descarga una página web). Para que dicha llamada asíncrona tuviera más sentido, se introducirán los elementos necesarios para provocar un efecto "bloqueo" que haga que avance los métodos DoIndependentWork.
 
-1) GetStringAsync()
+Resumiendo, este rol serán sustituidos por dos interfaces.
 
-2) GetString()
+    1) GetStringAsync()
+    2) GetString()
 
 ## Rol de DoIndependentWork ##
 
-Cada método compondrá su propia cadena. 
+Cada método compondrá su propia cadena la cual formára parte parcial de la cadena devuelta a niveles superiores. 
 
 La idea es ver como impacta al performance de los async en los casos que:
 
@@ -58,11 +69,9 @@ La idea es ver como impacta al performance de los async en los casos que:
 
 Durante la creación de la cadena, se van a generar los puntos de las series que más adelante se mostraran en la gráfica.
 
-Dependiendo de la combinación de los puntos 1) y 2) la concurrencia la gráfica final estará mezclada en mayor o menor medida.
+Dependiendo de la combinación de los puntos 1) y 2) la concurrencia a los métodos que generan la gráfica final tandrán un acceso serializado. Por eso, la gráfica será tratada como un recurso compartido.  
 
-Por eso, la gráfica será tratada como un recurso compartido, serializando su acceso a ella.  
-
-## Resumiendo.. ##
+## Resumiendo y  al grano.. ##
 
 La aplicación definirá una cascada de métodos  de varios niveles.
 
@@ -72,19 +81,19 @@ Se podrá elegir por cada nivel o método,
 
 2) Número de iteraciones o milisegundos a simular dependiendo si se elige Looping o Sleeping
 
-3) Ejecución Async o no, del punto 2)
+3) También se va a poder elegir si la ejecución del mismo DoIndependentWork se ejecutará en modo Async o no
 
-4) Como se llamará al siguiente Método
+4) Se podrá definir la estrategia a seguir para hacer la invocación al siguiente Método
 
-Cuando un método termine completamente su ejecución (Rol de DoIndependentWork), va a devolver a su invocante lo generado por él mismo más lo generado por lo que su siguiente generó, como ilustra la imagen siguiente.
+Cuando un método termine completamente su ejecución (Rol de DoIndependentWork), va a devolver a su invocante la cadena generada por éste mismo más lo generado por el siguiente método, como ilustra la figura.
 
 ![alt text](img/callStackMethods.png) 
 
-1) El resultado final debe ser predicible,  para así validar si funciona correctamente la combinación de implementaciones.
+1) El resultado final debe ser predicible,  para así validar si funciona correctamente la combinación de implementaciones/invocaciones.
 
-2) Por otro lado, nos mostrará el tiempo tardado
+2) Por otro lado, nos mostrará el tiempo tardado por cada método.
 
-3) Se podrá visualizar el algoritmo que implementa dicha cascada definida por el usuario.
+3) Se podrá visualizar el algoritmo que implementa dicha cascada.
 
 4) Se visualizará el orden en que se crearon los puntos
 
