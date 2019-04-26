@@ -200,9 +200,9 @@ En un escenario totalmente asíncrono como en el del ejemplo,varias ejecuciones 
 
 Pero en lo relativo al orden de ejecución de los pasos, como podemos apreciar en las siguientes capturas como resultado de la ejecución de dos veces el mismo escenario.. el orden de ejecución de los pasos, su intercalación, la predicción de qué método acabará antes que el otro, etc.. cambia.
 
-![Ejececucion 1](img/LinealPlusLost.png)
+![Ejecucion 1](img/LinealPlusLost.PNG)
 
-![Ejececucion 2](img/LinealPlusLost2.png)
+![Ejecucion 2](img/LinealPlusLost2.PNG)
 
 En estas dos gráficas, se ha optado por una representación lineal ya que nos ayuda a ver mejor las series Lost pintadas como líneas verticales.
 
@@ -212,6 +212,6 @@ Además, en lo relativo a las series 1 y 3, se puede ver como las ejecuciones de
 
 La siguiente gráfica corresponde a la versión por Puntos de la ejecución 2, en donde las series Lost cuestan más de identificarse.
 
-![Ejececucion 2 Puntos](img/PointPlusLost2.png)
+![Ejecucion 2 Puntos](img/PointPlusLost2.PNG)
 
 
